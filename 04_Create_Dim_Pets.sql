@@ -1,0 +1,7 @@
+USE HayDay_Farm;
+GO
+
+CREATE TABLE Dim_Pets(
+PetsID INT PRIMARY KEY IDENTITY(1,1),
+PetsName NVARCHAR(20) NOT NULL,
+RequiredLevel INT NOT NULL);
