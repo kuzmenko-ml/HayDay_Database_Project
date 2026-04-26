@@ -1,0 +1,8 @@
+USE HayDay_Farm;
+GO
+
+CREATE TABLE Dim_Products(
+ProductID INT PRIMARY KEY IDENTITY(1,1),
+ProductsName NVARCHAR(25) NOT NULL,
+RequiredLevel INT NOT NULL,
+Price INT NOT NULL);
