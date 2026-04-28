@@ -1,0 +1,8 @@
+USE HayDay_Farm;
+GO
+
+CREATE TABLE Fact_Pets_Livestock(
+PetsLivestockID INT PRIMARY KEY IDENTITY(1,1),
+FarmID INT NOT NULL,
+PetID INT NOT NULL,
+PetQuantity INT NOT NULL);
