@@ -1,0 +1,9 @@
+USE HayDay_Farm;
+GO
+
+CREATE TABLE Fact_Buildings(
+RecordBuildingID INT PRIMARY KEY IDENTITY(1,1),
+BuildingID INT NOT NULL,
+FarmID INT NOT NULL,
+ProductionSlots INT NOT NULL DEFAULT 1,
+MasteryStars INT NOT NULL DEFAULT 0);
