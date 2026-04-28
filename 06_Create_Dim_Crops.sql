@@ -1,0 +1,7 @@
+USE HayDay_Farm;
+GO
+
+CREATE TABLE Dim_Crops(
+CropID INT PRIMARY KEY IDENTITY(1,1),
+CropName NVARCHAR(20) NOT NULL,
+CropRequiredLevel INT NOT NULL);
