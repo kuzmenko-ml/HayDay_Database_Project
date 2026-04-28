@@ -1,0 +1,8 @@
+USE HayDay_Farm;
+GO
+
+CREATE TABLE Fact_Barn(
+RecordBarnID INT PRIMARY KEY IDENTITY(1,1),
+StorageID INT NOT NULL,
+ProductID INT NOT NULL,
+ProductCount INT NOT NULL);
