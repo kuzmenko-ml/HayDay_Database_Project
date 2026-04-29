@@ -1,9 +1,14 @@
 USE HayDay_Farm;
 GO
 
+IF OBJECT_ID('Fact_Buildings', 'U') IS NOT NULL
+    DROP TABLE Fact_Buildings;
+GO
+
 CREATE TABLE Fact_Buildings(
 RecordBuildingID INT PRIMARY KEY IDENTITY(1,1),
 BuildingID INT NOT NULL,
 FarmID INT NOT NULL,
+LocationID INT NOT NULL DEFAULT 1,
 ProductionSlots INT NOT NULL DEFAULT 1,
 MasteryStars INT NOT NULL DEFAULT 0);
