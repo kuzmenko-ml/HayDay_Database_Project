@@ -1,0 +1,8 @@
+USE HayDay_Farm;
+GO
+
+CREATE TABLE Fact_Tackle_Box(
+RecordTackleID INT PRIMARY KEY IDENTITY(1,1),
+StorageID INT NOT NULL,
+TackleID INT NOT NULL,
+TackleQuantity INT NOT NULL);
