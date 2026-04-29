@@ -1,0 +1,7 @@
+USE HayDay_Farm;
+GO
+
+CREATE TABLE Dim_Tackle(
+TackleID INT PRIMARY KEY IDENTITY(1,1),
+TackleName NVARCHAR(40) NOT NULL,
+TackleRequiredLevel INT NOT NULL);
