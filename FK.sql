@@ -36,3 +36,9 @@ FOREIGN KEY (ProductID) REFERENCES Dim_Products(ProductID);
 ALTER TABLE Dim_Pets
 ADD CONSTRAINT FK_Pets_Crops
 FOREIGN KEY (CropID) REFERENCES Dim_Crops(CropID);
+
+-- зв'язки (помаранчева лінія)
+
+ALTER TABLE Dim_Storages
+ADD CONSTRAINT FK_Storages_Types
+FOREIGN KEY (StorageTypeID) REFERENCES Dim_Storage_Type(StorageTypeID);
