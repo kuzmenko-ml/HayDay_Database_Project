@@ -56,3 +56,46 @@ FOREIGN KEY (StorageID) REFERENCES Dim_Storages (StorageID);
 ALTER TABLE Fact_Tackle_Box
 ADD CONSTRAINT FK_FactTackleBox_DimStorages
 FOREIGN KEY (StorageID) REFERENCES Dim_Storages (StorageID);
+
+-- зв'язки (рожева лінія)
+
+ALTER TABLE Fact_Farm_Livestock
+ADD CONSTRAINT FK_FactFarmLivestock_DimFarms
+FOREIGN KEY (FarmID) REFERENCES Dim_Farms (FarmID);
+
+ALTER TABLE Fact_Pets_Livestock
+ADD CONSTRAINT FK_FactPetsLivestock_DimFarms
+FOREIGN KEY (FarmID) REFERENCES Dim_Farms (FarmID);
+
+ALTER TABLE Fact_Barn
+ADD CONSTRAINT FK_FactBarn_DimFarms
+FOREIGN KEY (FarmID) REFERENCES Dim_Farms (FarmID);
+
+ALTER TABLE Fact_Silo
+ADD CONSTRAINT FK_FactSilo_DimFarms
+FOREIGN KEY (FarmID) REFERENCES Dim_Farms (FarmID);
+
+ALTER TABLE Fact_Buildings
+ADD CONSTRAINT FK_FactBuildings_DimFarms
+FOREIGN KEY (FarmID) REFERENCES Dim_Farms (FarmID);
+
+ALTER TABLE Fact_Tree_Bush
+ADD CONSTRAINT FK_FactTreeBush_DimFarms
+FOREIGN KEY (FarmID) REFERENCES Dim_Farms (FarmID);
+
+ALTER TABLE Dim_Town_Buildings
+ADD CONSTRAINT FK_DimTownBuildings_DimFarms
+FOREIGN KEY (FarmID) REFERENCES Dim_Farms (FarmID);
+
+ALTER TABLE Fact_Tackle_Box
+ADD CONSTRAINT FK_FactTackleBox_DimFarms
+FOREIGN KEY (FarmID) REFERENCES Dim_Farms (FarmID);
+
+ALTER TABLE Fact_Fishing_Spots
+ADD CONSTRAINT FK_FactFishingSpots_DimFarms
+FOREIGN KEY (FarmID) REFERENCES Dim_Farms (FarmID);
+
+ALTER TABLE Fact_Farm_Wallet
+ADD CONSTRAINT FK_FactFarmWallet_DimFarms
+FOREIGN KEY (FarmID) REFERENCES Dim_Farms (FarmID);
+
