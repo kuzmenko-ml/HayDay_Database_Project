@@ -42,3 +42,17 @@ FOREIGN KEY (CropID) REFERENCES Dim_Crops(CropID);
 ALTER TABLE Dim_Storages
 ADD CONSTRAINT FK_Storages_Types
 FOREIGN KEY (StorageTypeID) REFERENCES Dim_Storage_Type(StorageTypeID);
+
+-- зв'зки (жовта лінія)
+
+ALTER TABLE Fact_Barn
+ADD CONSTRAINT FK_FactBarn_DimStorages
+FOREIGN KEY (StorageID) REFERENCES Dim_Storages (StorageID);
+
+ALTER TABLE Fact_Silo
+ADD CONSTRAINT FK_FactSilo_DimStorages
+FOREIGN KEY (StorageID) REFERENCES Dim_Storages (StorageID);
+
+ALTER TABLE Fact_Tackle_Box
+ADD CONSTRAINT FK_FactTackleBox_DimStorages
+FOREIGN KEY (StorageID) REFERENCES Dim_Storages (StorageID);
