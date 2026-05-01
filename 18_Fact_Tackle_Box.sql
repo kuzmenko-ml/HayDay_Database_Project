@@ -9,5 +9,6 @@ CREATE TABLE Fact_Tackle_Box(
 RecordTackleID INT PRIMARY KEY IDENTITY(1,1),
 LocationID INT NOT NULL,
 StorageID INT NOT NULL,
+FarmID INT NOT NULL,
 TackleID INT NOT NULL,
 TackleQuantity INT NOT NULL);
