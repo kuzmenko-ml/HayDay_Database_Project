@@ -13,3 +13,5 @@ ProductMaxPrice INT NOT NULL,
 ProductExperience INT NOT NULL,
 ProductTimeMinutes INT NOT NULL,
 ProductMachineID INT NOT NULL);
+
+EXEC sp_rename 'Dim_Products.ProductMachineID', 'BuildingID', 'COLUMN';
