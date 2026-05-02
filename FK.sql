@@ -27,6 +27,10 @@ ALTER TABLE Fact_Town_Buildings
 ADD CONSTRAINT FK_Fact_Town_Buildings_Location
 FOREIGN KEY (LocationID) REFERENCES Dim_Location(LocationID);
 
+ALTER TABLE Fact_Buildings
+ADD CONSTRAINT FK_FactBuildings_Location
+FOREIGN KEY (LocationID) REFERENCES Dim_Location (LocationID);
+
 -- зв'язки (червона лінія)
 
 ALTER TABLE Dim_Pets
