@@ -29,7 +29,7 @@ FOREIGN KEY (LocationID) REFERENCES Dim_Location(LocationID);
 
 ALTER TABLE Fact_Buildings
 ADD CONSTRAINT FK_FactBuildings_Location
-FOREIGN KEY (LocationID) REFERENCES Dim_Location (LocationID);
+FOREIGN KEY (LocationID) REFERENCES Fact_Buildings (LocationID);
 
 -- зв'язки (червона лінія)
 
@@ -101,6 +101,10 @@ FOREIGN KEY (FarmID) REFERENCES Dim_Farms (FarmID);
 
 ALTER TABLE Fact_Farm_Wallet
 ADD CONSTRAINT FK_FactFarmWallet_DimFarms
+FOREIGN KEY (FarmID) REFERENCES Dim_Farms (FarmID);
+
+ALTER TABLE Dim_Storages
+ADD CONSTRAINT FK_DimStorages_DimFarms
 FOREIGN KEY (FarmID) REFERENCES Dim_Farms (FarmID);
 
 -- зв'язки (синя лінія)
