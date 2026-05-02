@@ -45,6 +45,10 @@ ALTER TABLE Dim_Animals
 ADD CONSTRAINT FK_DimAnimals_DimProducts
 FOREIGN KEY (ProductID) REFERENCES Dim_Products (ProductID);
 
+ALTER TABLE Dim_Products
+ADD CONSTRAINT FK_DimProducts_DimBuildings
+FOREIGN KEY (BuildingID) REFERENCES Dim_Buildings (BuildingID);
+
 -- зв'язки (помаранчева лінія)
 
 ALTER TABLE Dim_Storages
