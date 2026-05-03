@@ -1,0 +1,13 @@
+USE HayDay_Farm;
+GO
+
+IF OBJECT_ID('Fact_Silo','U') IS NOT NULL
+	DROP TABLE Fact_Silo
+GO
+
+CREATE TABLE Fact_Silo(
+RecordSiloID INT PRIMARY KEY IDENTITY(1,1),
+StorageID INT NOT NULL,
+FarmID INT NOT NULL,
+CropID INT NOT NULL,
+CropCount INT NOT NULL);

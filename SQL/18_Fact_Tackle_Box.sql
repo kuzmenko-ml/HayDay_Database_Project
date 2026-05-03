@@ -1,0 +1,14 @@
+USE HayDay_Farm;
+GO
+
+IF OBJECT_ID('Fact_Tackle_Box','U') IS NOT NULL
+	DROP TABLE Fact_Tackle_Box
+GO
+
+CREATE TABLE Fact_Tackle_Box(
+RecordTackleID INT PRIMARY KEY IDENTITY(1,1),
+LocationID INT NOT NULL,
+StorageID INT NOT NULL,
+FarmID INT NOT NULL,
+TackleID INT NOT NULL,
+TackleQuantity INT NOT NULL);

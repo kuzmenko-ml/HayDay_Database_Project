@@ -1,0 +1,14 @@
+USE HayDay_Farm;
+GO
+
+IF OBJECT_ID('Dim_Crops','U') IS NOT NULL
+	DROP TABLE Dim_Crops
+GO
+
+CREATE TABLE Dim_Crops(
+CropID INT PRIMARY KEY IDENTITY(1,1),
+CropName NVARCHAR(20) NOT NULL,
+CropRequiredLevel INT NOT NULL,
+CropExperience INT NOT NULL,
+CropTimeMinutes INT NOT NULL,
+CropMaxPrice INT NOT NULL);

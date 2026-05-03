@@ -1,0 +1,13 @@
+USE HayDay_Farm;
+GO
+
+IF OBJECT_ID('Dim_Farms','U') IS NOT NULL
+	DROP TABLE Dim_Farms
+GO
+
+CREATE TABLE Dim_Farms(
+	FarmId INT PRIMARY KEY IDENTITY(1,1),
+	FarmName NVARCHAR(20) NOT NULL,
+	FarmLevel INT NOT NULL DEFAULT 1,
+	FarmExperience INT NOT NULL,
+	FarmCreatedAt DATETIME);
