@@ -15,4 +15,3 @@ ProductTimeMinutes INT NOT NULL,
 ProductMachineID INT NOT NULL);
 
 EXEC sp_rename 'Dim_Products.ProductMachineID', 'BuildingID', 'COLUMN';
-EXEC sp_rename 'Dim_Products.ProductsName', 'ProductName', 'COLUMN';
