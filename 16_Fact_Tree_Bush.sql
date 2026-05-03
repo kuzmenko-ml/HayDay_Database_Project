@@ -1,8 +1,0 @@
-USE HayDay_Farm;
-GO
-
-CREATE TABLE Fact_Tree_Bush(
-RecordTreeOrBushID INT PRIMARY KEY IDENTITY(1,1),
-FarmID INT NOT NULL,
-TreeOrBushID INT NOT NULL,
-TreeOrBushCount INT NOT NULL);

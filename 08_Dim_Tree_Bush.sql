@@ -1,7 +1,0 @@
-USE HayDay_Farm;
-GO
-
-CREATE TABLE Dim_Tree_Bush(
-TreeOrBushID INT PRIMARY KEY IDENTITY(1,1),
-TreeOrBushName NVARCHAR(25) NOT NULL,
-TreeOrBushRequiredLevel INT NOT NULL);

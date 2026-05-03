@@ -1,8 +1,0 @@
-USE HayDay_Farm;
-GO
-
-CREATE TABLE Dim_Storages(
-StorageID INT PRIMARY KEY IDENTITY(1,1),
-FarmID INT NOT NULL,
-StorageTypeID INT NOT NULL,
-StorageCapacity INT NOT NULL);

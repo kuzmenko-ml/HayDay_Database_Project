@@ -1,6 +1,0 @@
-USE HayDay_Farm;
-GO
-
-CREATE TABLE Dim_Storage_Type(
-StorageTypeID INT PRIMARY KEY IDENTITY(1,1),
-StorageTypeName NVARCHAR(20) NOT NULL);
