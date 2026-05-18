@@ -10,5 +10,4 @@ CREATE TABLE Dim_Animals(
 	AnimalName NVARCHAR(20) NOT NULL,
 	ProductID INT NOT NULL,
 	ProductionTimeMinutes INT NOT NULL,
-	AnimalRequiredLevel INT NOT NULL,
-	AnimalExperience INT NOT NULL);
+	AnimalRequiredLevel INT NOT NULL);
