@@ -8,6 +8,5 @@ GO
 CREATE TABLE Dim_Town_Buildings(
     TownBuildingID INT PRIMARY KEY IDENTITY(1,1),
     TownBuildingName NVARCHAR(35) NOT NULL,
-    FarmID INT NOT NULL,
     TownBuildingRequiredReputation INT NOT NULL, 
     LocationID INT NOT NULL);
