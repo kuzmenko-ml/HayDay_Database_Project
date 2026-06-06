@@ -68,3 +68,19 @@ SELECT * FROM Dim_Tree_Bush;
 SELECT * FROM Dim_Town_Buildings;
 SELECT * FROM Dim_Tackle;
 SELECT * FROM Dim_Fishing_Spots;
+SELECT * FROM Dim_Currencies;
+SELECT * FROM Dim_Storage_Type;
+SELECT * FROM Dim_Storages;
+
+INSERT INTO Dim_Currencies (CurrencyName, CurrencyIsTemporary)
+VALUES ('Coins', 1);
+
+INSERT INTO Dim_Storage_Type (StorageTypeName)
+VALUES ('Ambar'),
+	   ('Silo');
+
+INSERT INTO Dim_Storages (FarmID, StorageTypeID, StorageCapacity)
+VALUES (1,1,1400),
+	   (1,1,1350),
+	   (2,1,300),
+	   (2,2,250);
