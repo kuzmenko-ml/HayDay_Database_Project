@@ -98,3 +98,11 @@ DELETE FROM Dim_Storage_Type
 WHERE StorageTypeID = 1002;
 
 DBCC CHECKIDENT ('Dim_Storage_Type', RESEED, 2);
+
+DELETE FROM Dim_Storages
+WHERE StorageID = 1002;
+
+DELETE FROM Dim_Storages
+WHERE StorageID = 1003;
+
+DBCC CHECKIDENT ('Dim_Storages', RESEED, 2);
