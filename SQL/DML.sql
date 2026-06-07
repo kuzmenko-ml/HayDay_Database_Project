@@ -181,3 +181,8 @@ SELECT * FROM Fact_Town_Buildings;
 SELECT * FROM Fact_Tackle_Box;
 SELECT * FROM Fact_Fishing_Spots;
 SELECT * FROM Fact_Farm_Wallet;
+
+EXEC SP_NewFarm @FarmName = 'Перевірка', @FarmLevel = 28, @FarmExperience = 3876, @FarmCreatedAt = '2001-08-15';
+SELECT * FROM Dim_Farms;
+SELECT * FROM Dim_Storages;
+SELECT * FROM Fact_Farm_Wallet;
