@@ -88,3 +88,13 @@ VALUES (1,1,1400),
 UPDATE Dim_Storages
 SET StorageTypeID = 2
 WHERE StorageID = 2;
+
+INSERT INTO Dim_Storage_Type (StorageTypeName)
+VALUES ('Tackle box');
+
+SELECT * FROM Dim_Storage_Type;
+
+DELETE FROM Dim_Storage_Type
+WHERE StorageTypeID = 1002;
+
+DBCC CHECKIDENT ('Dim_Storage_Type', RESEED, 2);
