@@ -84,3 +84,7 @@ VALUES (1,1,1400),
 	   (1,1,1350),
 	   (2,1,300),
 	   (2,2,250);
+
+UPDATE Dim_Storages
+SET StorageTypeID = 2
+WHERE StorageID = 2;
