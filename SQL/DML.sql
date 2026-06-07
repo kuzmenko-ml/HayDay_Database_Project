@@ -106,3 +106,78 @@ DELETE FROM Dim_Storages
 WHERE StorageID = 1003;
 
 DBCC CHECKIDENT ('Dim_Storages', RESEED, 2);
+
+INSERT INTO Fact_Farm_Livestock (FarmID,AnimalID,AnimalQuantity)
+VALUES (1,1,18),
+	   (1,2,12),
+	   (2,1,15);
+
+INSERT INTO Fact_Pets_Livestock (FarmID,PetID,PetQuantity)
+VALUES (1,2,3),
+	   (2,2,1);
+
+
+INSERT INTO Fact_Barn (StorageID,FarmID,ProductID,ProductCount)
+VALUES (1,1,4,31),
+	   (1,1,7,10),
+	   (3,2,4,5),
+	   (3,2,6,8);
+
+INSERT INTO Fact_Silo (StorageID,FarmID,CropID,CropCount)
+VALUES (2,1,3,107),
+	   (2,1,1,480),
+	   (4,2,1,68),
+	   (4,2,2,4);
+
+INSERT INTO Fact_Buildings (BuildingID,FarmID,LocationID,ProductionSlots,MasteryStars)
+VALUES (1,1,1,8,3),
+       (2,1,1,5,3),
+	   (3,1,1,7,3),
+	   (4,1,1,0,0),
+	   (5,1,1,0,0),
+	   (1,2,1,4,1),
+	   (2,2,1,4,0),
+	   (3,2,1,5,1),
+	   (4,2,1,0,0);
+
+INSERT INTO Fact_Tree_Bush (FarmID,TreeOrBushID,TreeOrBushCount)
+VALUES (1,1,13),
+	   (1,2,20),
+	   (2,2,40);
+
+INSERT INTO Fact_Town_Buildings (FarmID,LocationID,TownBuildingID,TownBuildingSlotQuantity,
+							     TownBuildingMoneyLevel,TownBuildingXPLevel,TownBuildingTimeLevel)
+VALUES (1,2,1,4,2,1,2),
+       (1,2,2,4,1,1,1),
+	   (2,2,1,2,1,1,1);
+
+INSERT INTO Dim_Storages (FarmID,StorageTypeID,StorageCapacity)
+VALUES (1,3,60),
+	   (2,3,20);
+
+INSERT INTO Fact_Tackle_Box (LocationID,StorageID,FarmID,TackleID,TackleQuantity)
+VALUES (3,5,1,1,7),
+       (3,5,1,2,10),
+	   (3,6,2,2,15);
+
+INSERT INTO Fact_Fishing_Spots (FarmID,LocationID,SpotID)
+VALUES (1,3,1),
+       (1,3,2),
+	   (1,3,3),
+	   (2,3,1),
+	   (2,3,2);
+
+INSERT INTO Fact_Farm_Wallet(FarmID,CurrencyID,CurrencyQuantity)
+VALUES (1,1,450789),
+	   (2,1,84030);
+
+SELECT * FROM Fact_Farm_Livestock;
+SELECT * FROM Fact_Pets_Livestock;
+SELECT * FROM Fact_Barn;
+SELECT * FROM Fact_Silo;
+SELECT * FROM Fact_Buildings;
+SELECT * FROM Fact_Tree_Bush;
+SELECT * FROM Fact_Town_Buildings;
+SELECT * FROM Fact_Tackle_Box;
+SELECT * FROM Fact_Fishing_Spots;
+SELECT * FROM Fact_Farm_Wallet;
