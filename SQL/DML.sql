@@ -237,3 +237,5 @@ EXEC SP_FarmInfoUpdate @FarmID = 2, @NewFarmExperience = 13333;
 EXEC SP_FarmInfoUpdate @FarmID = 2, @CurrencyName = 'coins ', @NewCurrencyQuantity = 10000;
 EXEC SP_FarmInfoUpdate @FarmID = 2, @StorageType = ' Silo ', @StorageCapacity = 300;
 EXEC SP_AllFarms;
+
+EXEC SP_FarmInfoUpdate @FarmID = 2, @CurrencyName = 'diamonds ', @NewCurrencyQuantity = 11;
