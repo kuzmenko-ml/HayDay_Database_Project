@@ -186,3 +186,29 @@ EXEC SP_NewFarm @FarmName = 'Перевірка', @FarmLevel = 28, @FarmExperien
 SELECT * FROM Dim_Farms;
 SELECT * FROM Dim_Storages;
 SELECT * FROM Fact_Farm_Wallet;
+
+SELECT f.FarmName, f.FarmLevel,f.FarmCreatedAt,c.CurrencyName,fw.CurrencyQuantity
+FROM Dim_Farms f
+INNER JOIN Fact_Farm_Wallet fw ON f.FarmId = fw.FarmID
+INNER JOIN Dim_Currencies c ON c.CurrencyID = fw.CurrencyID
+ORDER BY FarmName DESC;
+
+SELECT f.FarmName, f.FarmLevel, f.FarmCreatedAt,
+        SUM(CASE WHEN fw.CurrencyID = 1 THEN fw.CurrencyQuantity ELSE 0 END) AS Coins,
+        SUM(CASE WHEN fw.CurrencyID = 2 THEN fw.CurrencyQuantity ELSE 0 END) AS Diamonds
+FROM Dim_Farms f
+INNER JOIN Fact_Farm_Wallet fw ON f.FarmID = fw.FarmID
+GROUP BY f.FarmName, f.FarmLevel, f.FarmCreatedAt
+ORDER BY f.FarmName DESC;
+
+SELECT f.FarmName, f.FarmLevel, f.FarmCreatedAt,
+        MAX(CASE WHEN fw.CurrencyID = 1 THEN fw.CurrencyQuantity ELSE 0 END) AS Coins,
+        MAX(CASE WHEN fw.CurrencyID = 2 THEN fw.CurrencyQuantity ELSE 0 END) AS Diamonds,
+        MAX(CASE WHEN s.StorageTypeID = 1 THEN s.StorageCapacity ELSE 0 END) AS Ambar,
+        MAX(CASE WHEN s.StorageTypeID = 2 THEN s.StorageCapacity ELSE 0 END) AS Silo,
+        MAX(CASE WHEN s.StorageTypeID = 3 THEN s.StorageCapacity ELSE 0 END) AS [Tackle box]
+FROM Dim_Farms f
+INNER JOIN Fact_Farm_Wallet fw ON f.FarmID = fw.FarmID
+INNER JOIN Dim_Storages s ON f.FarmId = s.FarmID
+GROUP BY f.FarmName, f.FarmLevel, f.FarmCreatedAt
+ORDER BY f.FarmName DESC;
