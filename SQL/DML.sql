@@ -212,3 +212,23 @@ INNER JOIN Fact_Farm_Wallet fw ON f.FarmID = fw.FarmID
 INNER JOIN Dim_Storages s ON f.FarmId = s.FarmID
 GROUP BY f.FarmName, f.FarmLevel, f.FarmCreatedAt
 ORDER BY f.FarmName DESC;
+
+UPDATE Dim_Storages
+SET StorageCapacity = 250
+WHERE StorageID = 7;
+
+UPDATE Dim_Storages
+SET StorageCapacity = 100
+WHERE StorageID = 8;
+
+UPDATE Fact_Farm_Wallet
+SET CurrencyQuantity = 9810
+WHERE FarmID = 3 AND CurrencyID = 1;
+
+INSERT INTO Dim_Currencies (CurrencyName, CurrencyIsTemporary)
+VALUES ('Diamonds', 1);
+
+INSERT INTO Fact_Farm_Wallet (FarmID,CurrencyID,CurrencyQuantity)
+VALUES (1,2,98),
+	   (2,2,20),
+	   (3,2,40);
