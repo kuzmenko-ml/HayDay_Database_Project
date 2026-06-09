@@ -239,3 +239,32 @@ EXEC SP_FarmInfoUpdate @FarmID = 2, @StorageType = ' Silo ', @StorageCapacity = 
 EXEC SP_AllFarms;
 
 EXEC SP_FarmInfoUpdate @FarmID = 2, @CurrencyName = 'diamonds ', @NewCurrencyQuantity = 11;
+
+SELECT f.FarmName,b.ProductID, b.ProductCount
+FROM Dim_Farms f
+INNER JOIN Fact_Barn b ON f.FarmID = b.FarmID;
+
+CREATE PROCEDURE SP_GetProductFromBarn
+	@FarmID INT,
+	@ProductName NVARCHAR(50)
+AS
+BEGIN 
+	IF EXISTS (SELECT 1 FROM Dim_Products WHERE UPPER(ProductsName) = UPPER(@ProductName))
+		BEGIN
+			IF EXISTS (SELECT 1 FROM Fact_Barn WHERE UPPER(ProductName) = UPPER(@ProductName))
+		END
+	
+
+	SELECT f.FarmName,b.ProductID, b.ProductCount
+	FROM Dim_Farms f
+	INNER JOIN Fact_Barn b ON f.FarmID = b.FarmID
+	WHERE f.FarmID = @FarmID;
+END;
+
+SELECT * FROM Fact_Barn;
+SELECT * FROM Dim_Products;
+
+IF UPPER(@ProductName) = (SELECT UPPER(ProductsName) FROM Dim_Products)
+	BEGIN
+		SET @ProductIDTemp = 
+	END;
