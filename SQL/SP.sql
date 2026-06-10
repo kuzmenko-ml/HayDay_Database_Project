@@ -180,3 +180,19 @@ BEGIN
 		END
 	ELSE PRINT 'Product not exists at all in data base!'
 END;
+
+ALTER PROCEDURE SP_GetProductFromBarn
+	@FarmID INT,
+	@ProductName NVARCHAR(50)
+AS
+BEGIN 
+	IF EXISTS (SELECT 1 FROM Dim_Products WHERE UPPER(ProductsName) = UPPER(@ProductName))
+		BEGIN
+			SELECT f.FarmName,p.ProductsName, b.ProductCount
+			FROM Dim_Farms f
+			INNER JOIN Fact_Barn b ON f.FarmID = b.FarmID
+			INNER JOIN Dim_Products p ON b.ProductID = p.ProductID
+			WHERE f.FarmID = @FarmID AND UPPER(p.ProductsName) = UPPER(@ProductName);
+		END
+	ELSE PRINT 'Product not exists at all in data base!'
+END;
