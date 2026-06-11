@@ -268,3 +268,22 @@ IF UPPER(@ProductName) = (SELECT UPPER(ProductsName) FROM Dim_Products)
 	BEGIN
 		SET @ProductIDTemp = 
 	END;
+
+CREATE TRIGGER TR_EggsCount
+ON Fact_Barn
+AFTER UPDATE
+AS
+BEGIN
+	IF EXISTS (
+		SELECT 1 FROM inserted i
+		INNER JOIN deleted d ON i.FarmID = d.FarmID AND i.ProductID = d.ProductID
+		WHERE i.FarmID = 1 
+		AND i.ProductID = 4 
+		AND d.ProductCount > 0
+		AND i.ProductCount = 0
+	)
+	BEGIN
+		PRINT 'NEED TO BUY EGGS! There is 0 eggs!'
+	END
+END;
+
