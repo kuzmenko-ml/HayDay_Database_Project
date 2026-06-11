@@ -196,3 +196,52 @@ BEGIN
 		END
 	ELSE PRINT 'Product not exists at all in data base!'
 END;
+
+ALTER PROCEDURE SP_SellProduct
+	@FarmID INT,
+	@ProductName NVARCHAR(50),
+	@ProductQuantity INT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	IF EXISTS (SELECT 1 FROM Dim_Farms WHERE FarmID = @FarmID) 
+	AND EXISTS (SELECT 1 FROM Dim_Products WHERE UPPER(ProductsName) = UPPER(@ProductName))
+	BEGIN
+		DECLARE @TempIDProduct INT;
+		DECLARE @ProductPrice INT;
+
+		SELECT 
+			@TempIDProduct = ProductID,
+			@ProductPrice = ProductMaxPrice
+			FROM Dim_Products 
+			WHERE UPPER(ProductsName) = UPPER(@ProductName);
+
+		BEGIN TRANSACTION;
+		BEGIN TRY
+
+			UPDATE Fact_Barn
+			SET ProductCount = ProductCount - @ProductQuantity
+			WHERE FarmID = @FarmID AND ProductID = @TempIDProduct AND ProductCount >= @ProductQuantity;
+
+			IF @@ROWCOUNT = 0
+			BEGIN 
+				PRINT 'ERROR!!!';
+				ROLLBACK TRANSACTION; 
+				RETURN;
+			END
+
+			UPDATE Fact_Farm_Wallet
+			SET CurrencyQuantity = CurrencyQuantity + (@ProductPrice * @ProductQuantity)
+			WHERE FarmID = @FarmID AND CurrencyID = 1;
+
+			COMMIT TRANSACTION;
+			PRINT 'Good!';
+
+		END TRY
+		BEGIN CATCH
+			 ROLLBACK TRANSACTION;
+			 PRINT 'ERROR';
+		END CATCH
+	END
+END;
