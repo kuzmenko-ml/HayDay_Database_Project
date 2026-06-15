@@ -276,3 +276,80 @@ BEGIN
     END
 END;
 GO
+
+ALTER PROCEDURE SP_FarmInfoUpdate
+    @FarmID INT,
+    @NewFarmName NVARCHAR(50) = NULL,
+    @NewFarmLevel INT = NULL,
+    @NewFarmExperience INT = NULL,
+    @NewFarmCreatedAt DATE = NULL,
+    @CurrencyName NVARCHAR(50) = NULL,
+    @NewCurrencyQuantity INT = NULL,
+    @StorageType NVARCHAR(50) = NULL,
+    @NewStorageCapacity INT = NULL
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    BEGIN TRANSACTION;
+
+    BEGIN TRY
+
+        UPDATE Dim_Farms
+        SET 
+            FarmName = ISNULL(@NewFarmName, FarmName),
+            FarmLevel = ISNULL(@NewFarmLevel, FarmLevel),
+            FarmExperience = ISNULL(@NewFarmExperience, FarmExperience),
+            FarmCreatedAt = ISNULL(@NewFarmCreatedAt, FarmCreatedAt)
+        WHERE FarmId = @FarmID;
+
+        IF @CurrencyName IS NOT NULL AND @NewCurrencyQuantity IS NOT NULL 
+        BEGIN 
+            DECLARE @TempNameID INT = NULL;
+
+            IF TRIM(UPPER(@CurrencyName)) = 'COINS'     SET @TempNameID = 1;
+            IF TRIM(UPPER(@CurrencyName)) = 'DIAMONDS'  SET @TempNameID = 2;
+
+            IF @TempNameID IS NOT NULL
+            BEGIN
+                UPDATE Fact_Farm_Wallet
+                SET CurrencyQuantity = @NewCurrencyQuantity
+                WHERE FarmID = @FarmID AND CurrencyID = @TempNameID;
+            END
+            ELSE
+            BEGIN
+                THROW 50001, 'Unknown Currency Name!', 1;
+            END
+        END
+        IF @StorageType IS NOT NULL AND @NewStorageCapacity IS NOT NULL
+        BEGIN 
+            DECLARE @TempStorageID INT = NULL;
+
+            IF TRIM(UPPER(@StorageType)) = 'AMBAR'       SET @TempStorageID = 1;
+            IF TRIM(UPPER(@StorageType)) = 'SILO'        SET @TempStorageID = 2;
+            IF TRIM(UPPER(@StorageType)) = 'TACKLEBOX'   SET @TempStorageID = 3;
+
+            IF @TempStorageID IS NOT NULL
+            BEGIN
+                UPDATE Dim_Storages
+                SET StorageCapacity = @NewStorageCapacity
+                WHERE FarmID = @FarmID AND StorageTypeID = @TempStorageID;
+            END
+            ELSE
+            BEGIN
+                THROW 50002, 'Unknown Storage Type!', 1; 
+            END
+        END
+
+        COMMIT TRANSACTION;
+        PRINT 'Farm info updated successfully.';
+
+    END TRY
+    BEGIN CATCH
+
+        ROLLBACK TRANSACTION;
+
+        PRINT 'Update failed. Error Message: ' + ERROR_MESSAGE();
+    END CATCH
+END;
+GO
