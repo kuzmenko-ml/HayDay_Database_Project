@@ -300,3 +300,22 @@ FROM Dim_Farms f
 INNER JOIN Fact_Farm_Wallet fw ON f.FarmID = fw.FarmID
 INNER JOIN Dim_Storages s ON f.FarmID = s.FarmID
 GROUP BY f.FarmName, f.FarmLevel, f.FarmCreatedAt;
+
+CREATE FUNCTION dbo.fn_GetProductFromBarn (
+	@FarmID INT,
+    @ProductName NVARCHAR(50)
+)
+RETURNS TABLE
+AS
+RETURN (
+	SELECT f.FarmName,
+		   p.ProductsName, 
+		   b.ProductCount
+	FROM Dim_Farms f
+	INNER JOIN Fact_Barn b ON f.FarmID = b.FarmID
+	INNER JOIN Dim_Products p ON b.ProductID = p.ProductID
+	WHERE f.FarmID = @FarmID 
+		AND UPPER(p.ProductsName) = UPPER(@ProductName)
+);
+
+DROP PROCEDURE SP_GetProductFromBarn;
