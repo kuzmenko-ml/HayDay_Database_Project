@@ -1,3 +1,6 @@
+import datetime
+import random
+
 print("працює")
 print("---------------------------")
 farm_name = "Super Cow Farm"
@@ -109,3 +112,120 @@ for player_id in new_players_ids:
 
 print("--- Обробку всієї пачки завершено! ---")
 print("---------------------------")
+
+def calculate_total_price(quantity, price_per_unit):
+    total = quantity * price_per_unit
+    return total 
+
+final_cost = calculate_total_price(10, 4.5)
+
+print("Результат роботи функції:")
+print(final_cost)
+print("---------------------------")
+
+def get_farm_stats():
+    level = 42
+    rating = 4.9
+    return level, rating
+
+current_level, current_rating = get_farm_stats()
+print(current_level,current_rating)
+print("---------------------------")
+
+def check_order_status(stock, required):
+    if stock >= required:
+        return "READY"
+    else:
+        return "NOT_ENOUGH"
+
+orders = [3, 12, 5, 8] 
+my_current_stock = 7  
+
+print("--- ЗАПУСК СКРИПТА ПЕРЕВІРКИ ЗАМОВЛЕНЬ ---")
+
+for order in orders:
+    status = check_order_status(my_current_stock, order)
+    
+    print("Замовлення на кількість " + str(order) + " шт. Статус: " + status)
+
+print("--- ПЕРЕВІРКУ ЗАВЕРШЕНО ---")
+print("---------------------------")
+orders_queue = [12, 5, 8]
+orders_queue.append(20)
+
+print("Поточна черга замовлень:")
+print(orders_queue)
+
+total_orders = len(orders_queue)
+print("Всього замовлень в черзі: " + str(total_orders))
+
+first_order = orders_queue[0]
+print("Перше замовлення на перевірку: " + str(first_order))
+print("---------------------------")
+
+mill_status = {
+    "building_name": "Млин №1",
+    "slots_total": 3,
+    "is_working": False
+}
+
+print("--- Початковий стан млина ---")
+print(mill_status)
+
+mill_status["is_working"] = True
+
+mill_status["current_product"] = "Борошно"
+
+print("\n--- Оновлений стан млина ---")
+print("Назва будівлі: " + mill_status["building_name"])
+print("Що виробляє: " + mill_status["current_product"])
+print("Чи працює зараз? " + str(mill_status["is_working"]))
+print("---------------------------")
+
+factories_table = [
+    {"name": "Цукровий завод", "level_required": 7, "is_built": True},
+    {"name": "Ткацький станок", "level_required": 16, "is_built": True},
+    {"name": "Пекарня", "level_required": 2, "is_built": False},
+    {"name": "Шахта", "level_required": 24, "is_built": False}
+]
+
+print("--- АНАЛІЗ СТАНУ БУДІВЕЛЬ НА ФЕРМІ ---")
+
+for factory in factories_table:
+    if not factory["is_built"]:
+        print("Будівлю '" + factory["name"] + "' потрібно побудувати!")
+        print("Вона стане доступна на рівні: " + str(factory["level_required"]))
+        print("---------------------------------")
+
+print("--- АНАЛІЗ ЗАВЕРШЕНО ---")
+print("---------------------------------")
+
+total_gold = 5000
+active_players = 0 
+
+print("--- Спроба розрахувати бонус ---")
+
+try:
+    gold_per_player = total_gold / active_players
+    print("Кожен гравець отримує: " + str(gold_per_player))
+    
+except ZeroDivisionError:
+    print("Помилка! Кількість активних гравців дорівнює нулю.")
+    print("Нарахування бонусу перенесено на завтра.")
+
+print("--- Скрипт продовжив роботу без аварійного завершення! ---")
+print("---------------------------------")
+current_time = datetime.datetime.now()
+
+print("Поточна дата та час на комп'ютері:")
+print(current_time)
+print("---------------------------------")
+print("--- ЗАПУСК СИСТЕМИ МОНІТОРИНГУ ХЕЙДЕЙ ---")
+
+online_players = random.randint(500, 1000)
+
+timestamp = datetime.datetime.now().strftime("%H:%M:%S")
+
+print("[" + timestamp + "] Поточний онлайн: " + str(online_players) + " гравців.")
+
+print("--- МОНІТОРИНГ ЗАВЕРШЕНО УСПІШНО ---")
