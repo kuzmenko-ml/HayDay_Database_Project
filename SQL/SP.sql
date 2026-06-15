@@ -245,3 +245,34 @@ BEGIN
 		END CATCH
 	END
 END;
+
+ALTER PROCEDURE SP_DeleteFarm
+    @FarmID INT
+AS
+BEGIN
+    IF EXISTS (SELECT 1 FROM Dim_Farms WHERE FarmID = @FarmID)
+    BEGIN
+        BEGIN TRANSACTION; 
+        BEGIN TRY
+            DELETE FROM Fact_Farm_Wallet WHERE FarmID = @FarmID;
+            DELETE FROM Fact_Barn WHERE FarmID = @FarmID;
+            DELETE FROM Fact_Silo WHERE FarmID = @FarmID;
+            DELETE FROM Dim_Storages WHERE FarmID = @FarmID;
+
+            DELETE FROM Dim_Farms WHERE FarmID = @FarmID;
+
+            COMMIT TRANSACTION;
+            PRINT 'Farm and all related data deleted successfully.';
+        END TRY
+        BEGIN CATCH
+            ROLLBACK TRANSACTION;
+            PRINT 'Error occurred. Changes rolled back.';
+        END CATCH
+
+    END
+    ELSE 
+    BEGIN
+        PRINT 'Farm not exists!';
+    END
+END;
+GO
