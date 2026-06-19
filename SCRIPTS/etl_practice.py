@@ -52,3 +52,53 @@ def elt_practice():
     df["quantity"] = df["quantity"].fillna(0)
     print("--- ТАБЛИЦЯ ПІСЛЯ ОЧИЩЕННЯ ---")
     print(df)
+
+def practice_stage_IO():
+    print("=== ЕТАП INPUT/OUTPUT (ВВЕДЕННЯ/ВИВЕДЕННЯ) ===")
+    # 1. ГОЛОВНИЙ EXTRACT: Зчитуємо файл
+    path = r'D:\HayDay_Database_Project\DATA\експеремент.csv'
+    df = pd.read_csv(path)
+    print("\n1. Дані успішно зчитано з файлу. Ось перші рядочки:")
+    print(df.head(2))
+
+    # 2. МАГІЯ БУФЕРА ОБМІНУ (clipboard):       
+    print("\n2. Пробуємо зчитати те, що скопійовано в буфері обміну (Ctrl+C):")
+    try:
+        df_clipboard = pd.read_clipboard(sep=',') 
+        print(df_clipboard)
+    except Exception as e:
+        print("Буфер обміну порожній або там не табличні дані. Скопіюй щось через Ctrl+C!")
+
+    # 3. ФІНАЛЬНИЙ LOAD: Зберігаємо копію в інший файл
+    output_path = r'D:\HayDay_Database_Project\DATA\тест_виведення.csv'
+    df.to_csv(output_path, index=False)
+    print(f"\n3. Дані успішно переписано у новий файл: {output_path}")
+
+def practice_stage_summarize_data():
+    path = r'D:\HayDay_Database_Project\DATA\експеремент.csv'
+    df = pd.read_csv(path)
+    print(df)
+    print('---------------------')
+    print(df['product'].value_counts())
+    print('---------------------')
+    print(len(df))
+    print('---------------------')
+    print(df.shape)
+    print('---------------------')
+    print(df['factory_id'].nunique())
+    print('---------------------')
+    print(df.describe())
+    print('---------------------')
+    print(df.info())
+    print('---------------------')
+    print(df.memory_usage())
+    print('---------------------')
+    print(df.dtypes)
+    print('---------------------')
+
+    print(df['quantity'].sum())
+    print(df['quantity'].count())
+    print(df['quantity'].median())
+    print(df['quantity'].min())
+
+
