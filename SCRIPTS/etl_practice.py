@@ -127,5 +127,24 @@ def practice_stage_handling_missing_data():
     print(df_clean)
     print("----------------------------------------\n")
 
+def practice_stage_subset_observation_rows():
+    path = r'D:\HayDay_Database_Project\DATA\експеремент.csv'
+    df = pd.read_csv(path)
 
+    # 1. Пробуємо df.tail() — дивимось на "хвіст" таблиці
+    print("1. Останні 2 рядки нашої таблиці:")
+    print(df.tail(2))
+    print("----------------------------------------\n")
 
+    df_no_duplicates = df.drop_duplicates()
+    print("2. Таблиця після видалення дублікатів:")
+    print(df_no_duplicates)
+    print(f"Було рядків: {len(df)}, стало після видалення дублів: {len(df_no_duplicates)}")
+    print("----------------------------------------\n")
+
+    # 3. Пробуємо df.sample() — випадковий рядок
+    print("3. Випадковий рядок з таблиці для перевірки:")
+    print(df.sample(n=1))
+    print("----------------------------------------\n")
+
+practice_stage_subset_observation_rows()
