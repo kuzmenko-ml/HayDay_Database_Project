@@ -87,9 +87,9 @@ def practice_stage_summarize_data():
     print('---------------------')
     print(df['factory_id'].nunique())
     print('---------------------')
-    print(df.describe())
+    print(df.describe()) # можна писати без прінта
     print('---------------------')
-    print(df.info())
+    print(df.info()) # можна писати без прінта
     print('---------------------')
     print(df.memory_usage())
     print('---------------------')
@@ -100,5 +100,32 @@ def practice_stage_summarize_data():
     print(df['quantity'].count())
     print(df['quantity'].median())
     print(df['quantity'].min())
+
+def practice_stage_handling_missing_data():
+    print("=== ЕТАП HANDLING MISSING DATA (ОЧИЩЕННЯ) ===")
+    path = r'D:\HayDay_Database_Project\DATA\експеремент.csv'
+    df = pd.read_csv(path)
+    print("1. ОРИГІНАЛЬНА ТАБЛИЦЯ (із дірками NaN):")
+    print(df)
+    print("----------------------------------------\n")
+
+    # --- ВАРІАНТ А: Спробуємо видалити рядки з NaN ---
+    df_dropped = df.dropna()
+    print("2. ВАРІАНТ А: Таблиця після df.dropna() (рядки з NaN зникли):")
+    print(df_dropped)
+    print(f"Було рядків: {len(df)}, стало: {len(df_dropped)}")
+    print("----------------------------------------\n")
+
+    # --- ВАРІАНТ Б: Замінимо пустоти на конкретні значення ---
+    # Можна замінити все разом: df_filled = df.fillna(0)
+    # Але крутіше очистити кожен стовпець своїм логічним значенням:
+    df_clean = df.copy() # робимо копію для очищення
+    df_clean["product"] = df_clean["product"].fillna("Невідомий продукт")
+    df_clean["quantity"] = df_clean["quantity"].fillna(0)
+
+    print("3. ВАРІАНТ Б: Таблиця після точкового df.fillna():")
+    print(df_clean)
+    print("----------------------------------------\n")
+
 
 
