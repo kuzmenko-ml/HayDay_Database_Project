@@ -212,5 +212,14 @@ def practice_stage_make_new_columns():
     df['clipped_quantity'] = df['quantity'].clip(lower=190, upper=499)
     print(df)
 
+def practice_stage_group_data():
+    path = r'D:\HayDay_Database_Project\DATA\експеремент.csv'
+    df = pd.read_csv(path)
 
-practice_stage_make_new_columns()
+    print(df)
+    print("----------------------------------------")
+
+    df_grouped = df.groupby('product')['quantity'].agg('sum').reset_index()
+    print(df_grouped)
+
+practice_stage_group_data()
