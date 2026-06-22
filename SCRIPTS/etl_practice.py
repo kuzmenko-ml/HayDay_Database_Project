@@ -190,4 +190,27 @@ def practice_stage_subset_variables_colums():
     print(df_my_col)
     print("----------------------------------------")
 
-practice_stage_subset_variables_colums()
+def practice_stage_make_new_columns():
+    path = r'D:\HayDay_Database_Project\DATA\експеремент.csv'
+    df = pd.read_csv(path)
+
+    print(df)
+    print("----------------------------------------")
+
+    df_new = df.assign(double_quantity = lambda x: x['quantity'] * 2).dropna()
+    print(df_new)
+    print("----------------------------------------")
+
+    df['double_quantity'] = df['quantity'] * 2
+    print(df)
+    print("----------------------------------------")
+
+    df['quantity'] = df['quantity'].fillna(0)
+    df['order_size'] = pd.qcut(df['quantity'], q=3, labels=['Мале', 'Середнє', 'Велике'])
+    print(df)
+
+    df['clipped_quantity'] = df['quantity'].clip(lower=190, upper=499)
+    print(df)
+
+
+practice_stage_make_new_columns()
