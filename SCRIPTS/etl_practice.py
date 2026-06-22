@@ -173,5 +173,21 @@ def practice_stage_subset_observation_rows():
     print(df.tail(2))
     print("----------------------------------------")
 
+def practice_stage_subset_variables_colums():
+    print("=== ЕТАП SUBSET VARIABLES (ВИБІР СТОВПЦІВ) ===")
+    
+    path = r'D:\HayDay_Database_Project\DATA\експеремент.csv'
+    df = pd.read_csv(path)
+    
+    # Дивимось, які стовпці взагалі є в нашому файлі спочатку
+    print("Всі стовпці, що є в таблиці:", df.columns.tolist())
+    print("----------------------------------------")
+    
+    # Вибираємо лише кілька конкретних стовпців 
+    df_my_col = df[['order_id', 'product']] 
+    
+    print("Таблиця, в якій залишили тільки 2 потрібні колонки:")
+    print(df_my_col)
+    print("----------------------------------------")
 
-practice_stage_subset_observation_rows()
+practice_stage_subset_variables_colums()
