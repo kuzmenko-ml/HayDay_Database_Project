@@ -319,3 +319,34 @@ RETURN (
 );
 
 DROP PROCEDURE SP_GetProductFromBarn;
+
+SELECT * FROM Fact_Farm_Livestock;
+TRUNCATE TABLE Fact_Farm_Livestock;
+
+SELECT * FROM Fact_Pets_Livestock;
+TRUNCATE TABLE Fact_Pets_Livestock;
+
+TRUNCATE TABLE Fact_Barn;
+TRUNCATE TABLE Fact_Silo;
+TRUNCATE TABLE Fact_Buildings;
+TRUNCATE TABLE Fact_Tree_Bush;
+TRUNCATE TABLE Fact_Town_Buildings;
+TRUNCATE TABLE Fact_Tackle_Box;
+TRUNCATE TABLE Fact_Fishing_Spots;
+TRUNCATE TABLE Fact_Farm_Wallet;
+TRUNCATE TABLE Dim_Storages;
+TRUNCATE TABLE Dim_Currencies;
+
+DELETE FROM Dim_Currencies;
+DELETE FROM Dim_Animals;
+DELETE FROM Dim_Pets;
+DELETE FROM Dim_Products;
+DELETE FROM Dim_Crops;
+DELETE FROM Dim_Buildings;
+DELETE FROM Dim_Tree_Bush;
+DELETE FROM Dim_Town_Buildings;
+DELETE FROM Dim_Tackle;
+DELETE FROM Dim_Fishing_Spots;
+DELETE FROM Dim_Storage_Type;
+DELETE FROM Dim_Location;
+DELETE FROM Dim_Farms;
