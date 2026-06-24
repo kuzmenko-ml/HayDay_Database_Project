@@ -55,6 +55,33 @@ def load_base_dimensions(engine):
     print("Таблиця Dim_Storages успішно заповнена з урахуванням FOREIGN KEY!")
     print("-----------------------------------------------")
 
+def load_game_entities(engine):
+    print("Старт завантаження довідників...")
+
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.dirname(script_dir)
+    data_dir = os.path.join(project_root, 'DATA')
+
+    print("Читання buildings.csv...")
+    buildings_path = os.path.join(data_dir, 'buildings.csv')
+    df_buildings = pd.read_csv(buildings_path) 
+
+    db_locations = pd.read_sql("SELECT LocationID, LocationName FROM Dim_Location", engine)
+    df_buildings = df_buildings.merge(db_locations, on='LocationName', how='inner')
+
+    df_final_buildings = df_buildings[[
+        'BuildingName', 
+        'BuildingRequiredLevel', 
+        'LocationID', 
+        'BuildingPrice', 
+        'ConstructionTimeMinutes'
+    ]]
+
+    df_final_buildings.to_sql('Dim_Buildings', con=engine, if_exists='append', index=False)
+    print("Таблиця Dim_Buildings успішно заповнена з урахуванням FOREIGN KEY!")
+    print("-----------------------------------------------")
+
+
 if __name__ == "__main__":
     SERVER = '.' 
     DATABASE = 'HayDay_Farm'  
@@ -67,6 +94,7 @@ if __name__ == "__main__":
         
         # це вже виконано
         # load_base_dimensions(engine)
+        load_game_entities(engine)
         
         print("Конвеєр виконано без помилок! Перевіряй таблиці.")
         
