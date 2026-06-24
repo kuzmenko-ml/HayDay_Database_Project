@@ -77,6 +77,26 @@ def load_game_entities(engine):
     print("Таблиця Dim_Buildings успішно заповнена з урахуванням FOREIGN KEY!")
     print("-----------------------------------------------")
 
+    print("Читання products.csv...")
+    products_path = data_dir / 'products.csv'
+    df_products = pd.read_csv(products_path) 
+
+    db_buildings = pd.read_sql("SELECT BuildingID, BuildingName FROM Dim_Buildings", engine)
+    df_products = df_products.merge(db_buildings, on='BuildingName', how='inner')
+
+    df_final_products = df_products[[
+        'ProductsName', 
+        'ProductRequiredLevel', 
+        'ProductMaxPrice', 
+        'ProductExperience', 
+        'ProductTimeMinutes',
+        'BuildingID'
+    ]]
+
+    df_final_products.to_sql('Dim_Products', con=engine, if_exists='append', index=False)
+    print("Таблиця Dim_Products успішно заповнена з урахуванням FOREIGN KEY!")
+    print("-----------------------------------------------")
+
 
 if __name__ == "__main__":
     SERVER = '.' 
