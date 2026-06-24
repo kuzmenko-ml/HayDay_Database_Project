@@ -125,6 +125,24 @@ def load_game_entities(engine):
     print("Таблиця Dim_Pets успішно заповнена з урахуванням FOREIGN KEY!")
     print("----------------------------------------------------------------------------------")
 
+    print("Читання animals.csv...")
+    animals_path = data_dir / 'animals.csv'
+    df_animals = pd.read_csv(animals_path)
+
+    df_animals = df_animals.merge(db_products, on='ProductName', how='inner')
+
+    df_final_animals = df_animals [[
+        'AnimalName',
+        'ProductID',
+        'ProductionTimeMinutes',
+        'AnimalRequiredLevel'
+    ]]
+
+    df_final_animals.to_sql('Dim_Animals', con=engine, if_exists='append', index=False)
+    print("Таблиця Dim_Animals успішно заповнена з урахуванням FOREIGN KEY!")
+    print("----------------------------------------------------------------------------------")
+
+
 if __name__ == "__main__":
     SERVER = '.' 
     DATABASE = 'HayDay_Farm'  
@@ -137,7 +155,7 @@ if __name__ == "__main__":
         
         # це вже виконано
         # load_base_dimensions(engine)
-        load_game_entities(engine)
+        # load_game_entities(engine)
         
         print("Конвеєр виконано без помилок! Перевіряй таблиці.")
         
