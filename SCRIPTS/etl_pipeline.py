@@ -85,7 +85,7 @@ def load_game_entities(engine):
     df_products = df_products.merge(db_buildings, on='BuildingName', how='inner')
 
     df_final_products = df_products[[
-        'ProductsName', 
+        'ProductName', 
         'ProductRequiredLevel', 
         'ProductMaxPrice', 
         'ProductExperience', 
@@ -102,6 +102,27 @@ def load_game_entities(engine):
     df_crops = pd.read_csv(crops_path) 
     df_crops.to_sql('Dim_Crops', con=engine, if_exists='append', index=False)
     print("Таблиця Dim_Crops успішно заповнена!")
+    print("----------------------------------------------------------------------------------")
+
+    print("Читання pets.csv...")
+    pets_path = data_dir / 'pets.csv'
+    df_pets = pd.read_csv(pets_path)
+
+    db_products = pd.read_sql("SELECT ProductID, ProductName FROM Dim_Products", engine)
+    db_crops = pd.read_sql("SELECT CropID, CropName FROM Dim_Crops", engine)
+
+    df_pets = df_pets.merge(db_products, on='ProductName', how='left')
+    df_pets = df_pets.merge(db_crops, on='CropName', how='left')
+
+    df_final_pets = df_pets[[
+        'PetName',
+        'PetRequiredLevel',
+        'ProductID',
+        'CropID'
+    ]]
+
+    df_final_pets.to_sql('Dim_Pets', con=engine, if_exists='append', index=False)
+    print("Таблиця Dim_Pets успішно заповнена з урахуванням FOREIGN KEY!")
     print("----------------------------------------------------------------------------------")
 
 if __name__ == "__main__":
