@@ -1,6 +1,7 @@
 import pandas as pd
 from sqlalchemy import create_engine
 import os
+from pathlib import Path
 
 def load_base_dimensions(engine):
     print("Старт завантаження базових довідників...")
@@ -58,12 +59,10 @@ def load_base_dimensions(engine):
 def load_game_entities(engine):
     print("Старт завантаження довідників...")
 
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    project_root = os.path.dirname(script_dir)
-    data_dir = os.path.join(project_root, 'DATA')
+    data_dir = Path(__file__).resolve().parent.parent / 'DATA'
 
     print("Читання buildings.csv...")
-    buildings_path = os.path.join(data_dir, 'buildings.csv')
+    buildings_path = data_dir / 'buildings.csv'
     df_buildings = pd.read_csv(buildings_path) 
 
     db_locations = pd.read_sql("SELECT LocationID, LocationName FROM Dim_Location", engine)
