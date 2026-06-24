@@ -1,6 +1,5 @@
 import pandas as pd
 from sqlalchemy import create_engine
-import os
 from pathlib import Path
 
 def load_base_dimensions(engine):
