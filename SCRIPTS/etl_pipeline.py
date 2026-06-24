@@ -14,7 +14,7 @@ def load_base_dimensions(engine):
     # назва таблиці на сервері, з'єднання створене(місток),дописування до існуючих даниї,ігнорування індексів пандас
     df_farms.to_sql('Dim_Farms', con=engine, if_exists='append', index=False)
     print("Таблиця Dim_Farms успішно заповнена!")
-    print("-----------------------------------------------")
+    print("----------------------------------------------------------------------------------")
     
     # 2. Завантажуємо Dim_Location
     print("Читання locations.csv...")
@@ -22,7 +22,7 @@ def load_base_dimensions(engine):
     df_locations = pd.read_csv(locations_path)
     df_locations.to_sql('Dim_Location', con=engine, if_exists='append', index=False)
     print("Таблиця Dim_Location успішно заповнена!")
-    print("-----------------------------------------------")
+    print("----------------------------------------------------------------------------------")
     
     # 3. Завантажуємо Dim_Storage_Type
     print("Читання storage_types.csv...")
@@ -30,7 +30,7 @@ def load_base_dimensions(engine):
     df_types = pd.read_csv(types_path)
     df_types.to_sql('Dim_Storage_Type', con=engine, if_exists='append', index=False)
     print("Таблиця Dim_Storage_Type успішно заповнена!")
-    print("-----------------------------------------------")
+    print("----------------------------------------------------------------------------------")
     
     # 4. ОБРОБКА ТА ЗАВАНТАЖЕННЯ ЗАЛЕЖНОЇ ТАБЛИЦІ Dim_Storages
     print("Обробка складного довідника Dim_Storages...")
@@ -51,7 +51,7 @@ def load_base_dimensions(engine):
     # Заливаємо фінальний результат у базу
     df_final_storages.to_sql('Dim_Storages', con=engine, if_exists='append', index=False)
     print("Таблиця Dim_Storages успішно заповнена з урахуванням FOREIGN KEY!")
-    print("-----------------------------------------------")
+    print("----------------------------------------------------------------------------------")
 
 def load_game_entities(engine):
     print("Старт завантаження довідників...")
@@ -75,7 +75,7 @@ def load_game_entities(engine):
 
     df_final_buildings.to_sql('Dim_Buildings', con=engine, if_exists='append', index=False)
     print("Таблиця Dim_Buildings успішно заповнена з урахуванням FOREIGN KEY!")
-    print("-----------------------------------------------")
+    print("----------------------------------------------------------------------------------")
 
     print("Читання products.csv...")
     products_path = data_dir / 'products.csv'
@@ -95,8 +95,14 @@ def load_game_entities(engine):
 
     df_final_products.to_sql('Dim_Products', con=engine, if_exists='append', index=False)
     print("Таблиця Dim_Products успішно заповнена з урахуванням FOREIGN KEY!")
-    print("-----------------------------------------------")
+    print("----------------------------------------------------------------------------------")
 
+    print("Читання crops.csv...")
+    crops_path = data_dir / 'crops.csv'
+    df_crops = pd.read_csv(crops_path) 
+    df_crops.to_sql('Dim_Crops', con=engine, if_exists='append', index=False)
+    print("Таблиця Dim_Crops успішно заповнена!")
+    print("----------------------------------------------------------------------------------")
 
 if __name__ == "__main__":
     SERVER = '.' 
