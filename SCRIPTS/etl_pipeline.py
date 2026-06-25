@@ -167,6 +167,26 @@ def load_farm_facts(engine):
     print("Таблиця Fact_Farm_Livestock успішно заповнена з урахуванням FOREIGN KEY!")
     print("----------------------------------------------------------------------------------")
 
+    print("Читання pets_livestock.csv...")
+    pets_livestock_path = data_dir / 'pets_livestock.csv'
+    df_pets_livestock = pd.read_csv(pets_livestock_path)
+
+    db_pets = pd.read_sql("SELECT PetID, PetName FROM Dim_Pets", engine)
+
+    df_pets_livestock = df_pets_livestock.merge(db_farms, on='FarmName', how='inner')
+    df_pets_livestock = df_pets_livestock.merge(db_pets, on='PetName', how='inner')
+
+    df_final_pets_livestock = df_pets_livestock [[
+        'FarmID',
+        'PetID',
+        'PetQuantity'
+    ]]
+
+    df_final_pets_livestock.to_sql('Fact_Pets_Livestock', con=engine, if_exists='append', index=False)
+    print("Таблиця Fact_Pets_Livestock успішно заповнена з урахуванням FOREIGN KEY!")
+    print("----------------------------------------------------------------------------------")
+
+
 if __name__ == "__main__":
     SERVER = '.' 
     DATABASE = 'HayDay_Farm'  
