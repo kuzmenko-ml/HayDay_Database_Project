@@ -186,6 +186,27 @@ def load_farm_facts(engine):
     print("Таблиця Fact_Pets_Livestock успішно заповнена з урахуванням FOREIGN KEY!")
     print("----------------------------------------------------------------------------------")
 
+    print("Читання barn.csv...")
+    barn_path = data_dir / 'barn.csv'
+    df_barn = pd.read_csv(barn_path)
+
+    db_storages = pd.read_sql("SELECT StorageID, FarmID FROM Dim_Storages WHERE StorageTypeID = 1", engine)
+    db_products = pd.read_sql("SELECT ProductID, ProductName FROM Dim_Products", engine)
+
+    df_barn = df_barn.merge(db_farms, on='FarmName', how='inner')
+    df_barn = df_barn.merge(db_products, on='ProductName', how='inner')
+    df_barn = df_barn.merge(db_storages, on='FarmID', how='inner')
+
+    df_final_barn = df_barn [[
+        'StorageID',
+        'FarmID',
+        'ProductID',
+        'ProductCount'
+    ]]
+
+    df_final_barn.to_sql('Fact_Barn', con=engine, if_exists='append', index=False)
+    print("Таблиця Fact_Barn успішно заповнена з урахуванням FOREIGN KEY!")
+    print("----------------------------------------------------------------------------------")
 
 if __name__ == "__main__":
     SERVER = '.' 
