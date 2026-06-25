@@ -142,6 +142,30 @@ def load_game_entities(engine):
     print("Таблиця Dim_Animals успішно заповнена з урахуванням FOREIGN KEY!")
     print("----------------------------------------------------------------------------------")
 
+def load_farm_facts(engine):
+    print("Старт завантаження...")
+
+    data_dir = Path(__file__).resolve().parent.parent / 'DATA'
+
+    print("Читання farm_livestock.csv...")
+    farm_livestock_path = data_dir / 'farm_livestock.csv'
+    df_farm_livestock = pd.read_csv(farm_livestock_path) 
+
+    db_farms = pd.read_sql("SELECT FarmID, FarmName FROM Dim_Farms", engine)
+    db_animals = pd.read_sql("SELECT AnimalID, AnimalName FROM Dim_Animals", engine)
+
+    df_farm_livestock = df_farm_livestock.merge(db_farms, on='FarmName' ,how='inner',)
+    df_farm_livestock = df_farm_livestock.merge(db_animals, on='AnimalName' ,how='inner',)
+
+    df_final_farm_livestock = df_farm_livestock [[
+        'FarmID',
+        'AnimalID',
+        'AnimalQuantity'
+    ]]
+
+    df_final_farm_livestock.to_sql('Fact_Farm_Livestock', con=engine, if_exists='append', index=False)
+    print("Таблиця Fact_Farm_Livestock успішно заповнена з урахуванням FOREIGN KEY!")
+    print("----------------------------------------------------------------------------------")
 
 if __name__ == "__main__":
     SERVER = '.' 
@@ -156,6 +180,7 @@ if __name__ == "__main__":
         # це вже виконано
         # load_base_dimensions(engine)
         # load_game_entities(engine)
+        load_farm_facts(engine)
         
         print("Конвеєр виконано без помилок! Перевіряй таблиці.")
         
