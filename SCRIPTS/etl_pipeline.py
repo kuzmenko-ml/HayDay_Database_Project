@@ -230,6 +230,30 @@ def load_farm_facts(engine):
     print("Таблиця Fact_Silo успішно заповнена з урахуванням FOREIGN KEY!")
     print("----------------------------------------------------------------------------------")
 
+    print("Читання fact_buildings.csv...")
+    fact_buildings_path = data_dir / 'fact_buildings.csv'
+    df_fact_buildings = pd.read_csv(fact_buildings_path)
+
+    db_buildings = pd.read_sql("SELECT BuildingID, BuildingName FROM Dim_Buildings", engine)
+    db_locations = pd.read_sql("SELECT LocationID, LocationName FROM Dim_Location", engine)
+
+    df_fact_buildings = df_fact_buildings.merge(db_buildings, on='BuildingName', how='inner')
+    df_fact_buildings = df_fact_buildings.merge(db_farms, on='FarmName', how='inner')
+    df_fact_buildings = df_fact_buildings.merge(db_locations, on='LocationName', how='inner')
+
+    df_final_fact_buildings = df_fact_buildings[[
+        'BuildingID',
+        'FarmID',
+        'LocationID',
+        'ProductionSlots',
+        'MasteryStars'
+    ]]
+
+    df_final_fact_buildings.to_sql('Fact_Buildings', con=engine, if_exists='append', index=False)
+    print("Таблиця Fact_Buildings успішно заповнена з урахуванням FOREIGN KEY!")
+    print("----------------------------------------------------------------------------------")
+
+
 if __name__ == "__main__":
     SERVER = '.' 
     DATABASE = 'HayDay_Farm'  
