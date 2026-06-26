@@ -38,7 +38,7 @@ def load_base_dimensions(engine):
     df_storages = pd.read_csv(storages_path) # Текстовий файл (FarmName, StorageTypeName, StorageCapacity)
     
     # Витягуємо з бази актуальні ID, які SQL Server щойно згенерував для ферм та типів
-    db_farms = pd.read_sql("SELECT FarmId, FarmName FROM Dim_Farms", engine)
+    db_farms = pd.read_sql("SELECT FarmID, FarmName FROM Dim_Farms", engine)
     db_types = pd.read_sql("SELECT StorageTypeID, StorageTypeName FROM Dim_Storage_Type", engine)
     
     # Робимо MERGE, щоб замінити тексти на реальні ID з бази даних
@@ -46,7 +46,7 @@ def load_base_dimensions(engine):
     df_storages = df_storages.merge(db_types, on='StorageTypeName', how='inner')
     
     # Залишаємо тільки ті стовпчики, які чекає таблиця Dim_Storages в SQL Server
-    df_final_storages = df_storages[['FarmId', 'StorageTypeID', 'StorageCapacity']]
+    df_final_storages = df_storages[['FarmID', 'StorageTypeID', 'StorageCapacity']]
     
     # Заливаємо фінальний результат у базу
     df_final_storages.to_sql('Dim_Storages', con=engine, if_exists='append', index=False)
@@ -267,7 +267,7 @@ if __name__ == "__main__":
         # це вже виконано
         # load_base_dimensions(engine)
         # load_game_entities(engine)
-        load_farm_facts(engine)
+        # load_farm_facts(engine)
         
         print("Конвеєр виконано без помилок! Перевіряй таблиці.")
         
