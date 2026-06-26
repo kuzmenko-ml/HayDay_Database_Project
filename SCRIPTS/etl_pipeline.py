@@ -208,6 +208,28 @@ def load_farm_facts(engine):
     print("Таблиця Fact_Barn успішно заповнена з урахуванням FOREIGN KEY!")
     print("----------------------------------------------------------------------------------")
 
+    print("Читання silo.csv...")
+    silo_path = data_dir / 'silo.csv'
+    df_silo = pd.read_csv(silo_path)
+
+    db_storages = pd.read_sql("SELECT StorageID, FarmID FROM Dim_Storages WHERE StorageTypeID = 2", engine)
+    db_crop = pd.read_sql("SELECT CropID, CropName FROM Dim_Crops", engine)
+
+    df_silo = df_silo.merge(db_farms, on='FarmName', how='inner')
+    df_silo = df_silo.merge(db_crop, on='CropName', how='inner')
+    df_silo = df_silo.merge(db_storages, on='FarmID', how='inner')
+
+    df_final_silo = df_silo [[
+        'StorageID',
+        'FarmID',
+        'CropID',
+        'CropCount'
+    ]]
+
+    df_final_silo.to_sql('Fact_Silo', con=engine, if_exists='append', index=False)
+    print("Таблиця Fact_Silo успішно заповнена з урахуванням FOREIGN KEY!")
+    print("----------------------------------------------------------------------------------")
+
 if __name__ == "__main__":
     SERVER = '.' 
     DATABASE = 'HayDay_Farm'  
