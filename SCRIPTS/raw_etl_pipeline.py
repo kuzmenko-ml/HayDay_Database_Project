@@ -12,7 +12,7 @@ def load_base_dimensions(engine):
     farms_path = data_dir / 'farms.csv'
     df_farms = pd.read_csv(farms_path)
     # назва таблиці на сервері, з'єднання створене(місток),дописування до існуючих даниї,ігнорування індексів пандас
-    df_farms.to_sql('Dim_Farms', con=engine, if_exists='append', index=False)
+    df_farms.to_sql('Dim_Farms', con=engine,schema='raw', if_exists='replace', index=False)
     print("Таблиця Dim_Farms успішно заповнена!")
     print("----------------------------------------------------------------------------------")
     
@@ -20,7 +20,7 @@ def load_base_dimensions(engine):
     print("Читання locations.csv...")
     locations_path = data_dir / 'locations.csv'
     df_locations = pd.read_csv(locations_path)
-    df_locations.to_sql('Dim_Location', con=engine, if_exists='append', index=False)
+    df_locations.to_sql('Dim_Location', con=engine,schema='raw', if_exists='replace', index=False)
     print("Таблиця Dim_Location успішно заповнена!")
     print("----------------------------------------------------------------------------------")
     
@@ -28,29 +28,16 @@ def load_base_dimensions(engine):
     print("Читання storage_types.csv...")
     types_path = data_dir / 'storage_types.csv'
     df_types = pd.read_csv(types_path)
-    df_types.to_sql('Dim_Storage_Type', con=engine, if_exists='append', index=False)
+    df_types.to_sql('Dim_Storage_Type', con=engine, schema='raw', if_exists='replace', index=False)
     print("Таблиця Dim_Storage_Type успішно заповнена!")
     print("----------------------------------------------------------------------------------")
     
-    # 4. ОБРОБКА ТА ЗАВАНТАЖЕННЯ ЗАЛЕЖНОЇ ТАБЛИЦІ Dim_Storages
+    # 4. Завантажуємо Dim_Storages
     print("Обробка складного довідника Dim_Storages...")
     storages_path = data_dir / 'storages.csv'
-    df_storages = pd.read_csv(storages_path) # Текстовий файл (FarmName, StorageTypeName, StorageCapacity)
-    
-    # Витягуємо з бази актуальні ID, які SQL Server щойно згенерував для ферм та типів
-    db_farms = pd.read_sql("SELECT FarmID, FarmName FROM Dim_Farms", engine)
-    db_types = pd.read_sql("SELECT StorageTypeID, StorageTypeName FROM Dim_Storage_Type", engine)
-    
-    # Робимо MERGE, щоб замінити тексти на реальні ID з бази даних
-    df_storages = df_storages.merge(db_farms, on='FarmName', how='inner')
-    df_storages = df_storages.merge(db_types, on='StorageTypeName', how='inner')
-    
-    # Залишаємо тільки ті стовпчики, які чекає таблиця Dim_Storages в SQL Server
-    df_final_storages = df_storages[['FarmID', 'StorageTypeID', 'StorageCapacity']]
-    
-    # Заливаємо фінальний результат у базу
-    df_final_storages.to_sql('Dim_Storages', con=engine, if_exists='append', index=False)
-    print("Таблиця Dim_Storages успішно заповнена з урахуванням FOREIGN KEY!")
+    df_storages = pd.read_csv(storages_path) 
+    df_storages.to_sql('Dim_Storages', con=engine, schema='raw', if_exists='replace', index=False)
+    print("Таблиця Dim_Storages успішно заповнена!")
     print("----------------------------------------------------------------------------------")
 
 def load_game_entities(engine):
@@ -73,7 +60,7 @@ def load_game_entities(engine):
         'ConstructionTimeMinutes'
     ]]
 
-    df_final_buildings.to_sql('Dim_Buildings', con=engine, if_exists='append', index=False)
+    df_final_buildings.to_sql('Dim_Buildings', con=engine,schema='raw', if_exists='replace', index=False)
     print("Таблиця Dim_Buildings успішно заповнена з урахуванням FOREIGN KEY!")
     print("----------------------------------------------------------------------------------")
 
@@ -93,14 +80,14 @@ def load_game_entities(engine):
         'BuildingID'
     ]]
 
-    df_final_products.to_sql('Dim_Products', con=engine, if_exists='append', index=False)
+    df_final_products.to_sql('Dim_Products', con=engine, schema='raw', if_exists='replace', index=False)
     print("Таблиця Dim_Products успішно заповнена з урахуванням FOREIGN KEY!")
     print("----------------------------------------------------------------------------------")
 
     print("Читання crops.csv...")
     crops_path = data_dir / 'crops.csv'
     df_crops = pd.read_csv(crops_path) 
-    df_crops.to_sql('Dim_Crops', con=engine, if_exists='append', index=False)
+    df_crops.to_sql('Dim_Crops', con=engine, schema='raw', if_exists='replace', index=False)
     print("Таблиця Dim_Crops успішно заповнена!")
     print("----------------------------------------------------------------------------------")
 
@@ -121,7 +108,7 @@ def load_game_entities(engine):
         'CropID'
     ]]
 
-    df_final_pets.to_sql('Dim_Pets', con=engine, if_exists='append', index=False)
+    df_final_pets.to_sql('Dim_Pets', con=engine, schema='raw', if_exists='replace', index=False)
     print("Таблиця Dim_Pets успішно заповнена з урахуванням FOREIGN KEY!")
     print("----------------------------------------------------------------------------------")
 
@@ -138,7 +125,7 @@ def load_game_entities(engine):
         'AnimalRequiredLevel'
     ]]
 
-    df_final_animals.to_sql('Dim_Animals', con=engine, if_exists='append', index=False)
+    df_final_animals.to_sql('Dim_Animals', con=engine, schema='raw', if_exists='replace', index=False)
     print("Таблиця Dim_Animals успішно заповнена з урахуванням FOREIGN KEY!")
     print("----------------------------------------------------------------------------------")
 
@@ -163,7 +150,7 @@ def load_farm_facts(engine):
         'AnimalQuantity'
     ]]
 
-    df_final_farm_livestock.to_sql('Fact_Farm_Livestock', con=engine, if_exists='append', index=False)
+    df_final_farm_livestock.to_sql('Fact_Farm_Livestock', con=engine, schema='raw', if_exists='replace', index=False)
     print("Таблиця Fact_Farm_Livestock успішно заповнена з урахуванням FOREIGN KEY!")
     print("----------------------------------------------------------------------------------")
 
@@ -182,7 +169,7 @@ def load_farm_facts(engine):
         'PetQuantity'
     ]]
 
-    df_final_pets_livestock.to_sql('Fact_Pets_Livestock', con=engine, if_exists='append', index=False)
+    df_final_pets_livestock.to_sql('Fact_Pets_Livestock', con=engine, schema='raw', if_exists='replace', index=False)
     print("Таблиця Fact_Pets_Livestock успішно заповнена з урахуванням FOREIGN KEY!")
     print("----------------------------------------------------------------------------------")
 
@@ -204,7 +191,7 @@ def load_farm_facts(engine):
         'ProductCount'
     ]]
 
-    df_final_barn.to_sql('Fact_Barn', con=engine, if_exists='append', index=False)
+    df_final_barn.to_sql('Fact_Barn', con=engine, schema='raw', if_exists='replace', index=False)
     print("Таблиця Fact_Barn успішно заповнена з урахуванням FOREIGN KEY!")
     print("----------------------------------------------------------------------------------")
 
@@ -226,7 +213,7 @@ def load_farm_facts(engine):
         'CropCount'
     ]]
 
-    df_final_silo.to_sql('Fact_Silo', con=engine, if_exists='append', index=False)
+    df_final_silo.to_sql('Fact_Silo', con=engine, schema='raw', if_exists='replace', index=False)
     print("Таблиця Fact_Silo успішно заповнена з урахуванням FOREIGN KEY!")
     print("----------------------------------------------------------------------------------")
 
@@ -249,7 +236,7 @@ def load_farm_facts(engine):
         'MasteryStars'
     ]]
 
-    df_final_fact_buildings.to_sql('Fact_Buildings', con=engine, if_exists='append', index=False)
+    df_final_fact_buildings.to_sql('Fact_Buildings', con=engine, schema='raw', if_exists='replace', index=False)
     print("Таблиця Fact_Buildings успішно заповнена з урахуванням FOREIGN KEY!")
     print("----------------------------------------------------------------------------------")
 
