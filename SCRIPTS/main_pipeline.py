@@ -21,6 +21,22 @@ def transform_base_dimensions():
     df_storage_type = df_storage_type.dropna()
     df_storage_type['StorageTypeName'] = df_storage_type['StorageTypeName'].str.strip()
 
+    df_storages = pd.read_sql("SELECT * FROM raw.Storages", engine)
+
+    df_storages = df_storages.merge(df_farms, on='FarmName', how='inner', index=False)
+    df_storages = df_storages.merge(df_storage_type, on='StorageTypeName', how='inner', index=False)
+
+    df_storages['FarmID'] = df_storages['FarmID'].astype(int)
+    df_storages['StorageTypeID'] = df_storages['StorageTypeID'].astype(int)
+    df_storages['StorageCapacity'] = df_storages['StorageCapacity'].astype(int)
+
+    df_final_storages = df_storages[[
+        'FarmID',
+        'StorageTypeID',
+        'StorageCapacity'
+    ]]
+
+
 
 if __name__ == "__main__":
     SERVER = '.' 
