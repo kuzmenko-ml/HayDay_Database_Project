@@ -27,14 +27,14 @@ def transform_base_dimensions():
 
     df_storage_type.to_sql('Dim_Storage_Type', con=engine, if_exists='append', index=False)
 
-    df_storages = pd.read_sql("SELECT * FROM raw.Storages", engine)
+    df_storages = pd.read_sql("SELECT * FROM raw.Dim_Storages", engine)
 
     db_farms = pd.read_sql("SELECT FarmID, FarmName FROM Dim_Farms", engine)
     db_storage_types = pd.read_sql("SELECT StorageTypeID, StorageTypeName FROM Dim_Storage_Type", engine) 
 
     df_storages['FarmName'] = df_storages['FarmName'].str.strip()
     df_storages['StorageTypeName'] = df_storages['StorageTypeName'].str.strip()
-    
+
     df_storages = df_storages.merge(db_farms, on='FarmName', how='inner')
     df_storages = df_storages.merge(db_storage_types, on='StorageTypeName', how='inner')
 
@@ -50,7 +50,35 @@ def transform_base_dimensions():
 
     df_final_storages.to_sql('Dim_Storages', con=engine, if_exists='append', index=False)
 
+def transform_game_entities(): 
+    df_buildings = pd.read_sql("SELECT * FROM raw.Dim_Buildings", engine)
+    df_buildings = df_buildings.dropna()
 
+    db_location = pd.read_sql("SELECT LocationName, LocationID FROM Dim_Location", engine)
+
+    df_buildings['LocationName'] = df_buildings['LocationName'].str.strip()
+
+    df_buildings = df_buildings.merge(db_location, on='LocationName', how='inner')
+
+    df_buildings['BuildingName'] = df_buildings['BuildingName'].str.strip()
+    df_buildings['BuildingRequiredLevel'] = df_buildings['BuildingRequiredLevel'].astype(int)
+    df_buildings['LocationID'] = df_buildings['LocationID'].astype(int)
+    df_buildings['BuildingPrice'] = df_buildings['BuildingPrice'].astype(int)
+    df_buildings['ConstructionTimeMinutes'] = df_buildings['ConstructionTimeMinutes'].astype(int)
+
+    df_final_buildings = df_buildings[[
+        'BuildingName',
+        'BuildingRequiredLevel',
+        'LocationID',
+        'BuildingPrice',
+        'ConstructionTimeMinutes'
+    ]]
+
+    df_final_buildings.to_sql('Dim_Buildings', con=engine, if_exists='append', index=False)
+    print('Dim_Buildings завантажено успішно!')
+    print('------------------------------------')
+
+    
 
 if __name__ == "__main__":
     SERVER = '.' 
@@ -61,7 +89,8 @@ if __name__ == "__main__":
     try:
         print("(с2)... Підключення до сервера SQL Server...")
         engine = create_engine(connection_string)
-        
+        # transform_base_dimensions()
+
         print("(с2)...Конвеєр виконано без помилок! Перевіряй таблиці.")
         
     except Exception as e:
