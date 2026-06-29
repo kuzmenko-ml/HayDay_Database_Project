@@ -10,6 +10,12 @@ def transform_base_dimensions():
     df_farms['FarmExperience'] = df_farms['FarmExperience'].astype(int)
     df_farms['FarmCreatedAt'] = pd.to_datetime(df_farms['FarmCreatedAt'])
 
+    df_location = pd.read_sql("SELECT * FROM raw.Dim_Location", engine)
+
+    df_location = df_location.dropna()
+    df_location['LocationName'] = df_location['LocationName'].str.strip()
+    df_location['LocationRequiredLevel'] = df_location['LocationRequiredLevel'].astype(int)
+
 
 if __name__ == "__main__":
     SERVER = '.' 
