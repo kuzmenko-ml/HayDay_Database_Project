@@ -6,9 +6,11 @@ def transform_base_dimensions():
 
     df_farms = df_farms.dropna()
     df_farms['FarmName'] = df_farms['FarmName'].str.strip()
-    df_farms['FarmLevel'] = df_farms['FarmName'].astype(int)
+    df_farms['FarmLevel'] = df_farms['FarmLevel'].astype(int)
     df_farms['FarmExperience'] = df_farms['FarmExperience'].astype(int)
     df_farms['FarmCreatedAt'] = pd.to_datetime(df_farms['FarmCreatedAt'])
+
+    df_farms.to_sql('Dim_Farms', con=engine, if_exists='append', index=False)
 
     df_location = pd.read_sql("SELECT * FROM raw.Dim_Location", engine)
 
@@ -16,15 +18,25 @@ def transform_base_dimensions():
     df_location['LocationName'] = df_location['LocationName'].str.strip()
     df_location['LocationRequiredLevel'] = df_location['LocationRequiredLevel'].astype(int)
 
+    df_location.to_sql('Dim_Location', con=engine, if_exists='append', index=False)
+
     df_storage_type = pd.read_sql("SELECT * FROM raw.Dim_Storage_Type", engine)
 
     df_storage_type = df_storage_type.dropna()
     df_storage_type['StorageTypeName'] = df_storage_type['StorageTypeName'].str.strip()
 
+    df_storage_type.to_sql('Dim_Storage_Type', con=engine, if_exists='append', index=False)
+
     df_storages = pd.read_sql("SELECT * FROM raw.Storages", engine)
 
-    df_storages = df_storages.merge(df_farms, on='FarmName', how='inner', index=False)
-    df_storages = df_storages.merge(df_storage_type, on='StorageTypeName', how='inner', index=False)
+    db_farms = pd.read_sql("SELECT FarmID, FarmName FROM Dim_Farms", engine)
+    db_storage_types = pd.read_sql("SELECT StorageTypeID, StorageTypeName FROM Dim_Storage_Type", engine) 
+
+    df_storages['FarmName'] = df_storages['FarmName'].str.strip()
+    df_storages['StorageTypeName'] = df_storages['StorageTypeName'].str.strip()
+    
+    df_storages = df_storages.merge(db_farms, on='FarmName', how='inner')
+    df_storages = df_storages.merge(db_storage_types, on='StorageTypeName', how='inner')
 
     df_storages['FarmID'] = df_storages['FarmID'].astype(int)
     df_storages['StorageTypeID'] = df_storages['StorageTypeID'].astype(int)
@@ -35,6 +47,8 @@ def transform_base_dimensions():
         'StorageTypeID',
         'StorageCapacity'
     ]]
+
+    df_final_storages.to_sql('Dim_Storages', con=engine, if_exists='append', index=False)
 
 
 
