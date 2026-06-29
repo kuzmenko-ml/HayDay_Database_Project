@@ -78,7 +78,18 @@ def transform_game_entities():
     print('Dim_Buildings завантажено успішно!')
     print('------------------------------------')
 
-    
+    df_crops = pd.read_sql("SELECT * FROM raw.Dim_Crops", engine)
+    df_crops = df_crops.dropna()
+    df_crops['CropName'] = df_crops['CropName'].str.strip()
+    df_crops['CropRequiredLevel'] = df_crops['CropRequiredLevel'].astype(int)
+    df_crops['CropExperience'] = df_crops['CropExperience'].astype(int)
+    df_crops['CropTimeMinutes'] = df_crops['CropTimeMinutes'].astype(int)
+    df_crops['CropMaxPrice'] = df_crops['CropMaxPrice'].astype(int)
+
+    df_crops.to_sql('Dim_Crops', con=engine, if_exists='append', index=False)
+    print('Dim_Crops завантажено успішно!')
+    print('------------------------------------')
+
 
 if __name__ == "__main__":
     SERVER = '.' 
