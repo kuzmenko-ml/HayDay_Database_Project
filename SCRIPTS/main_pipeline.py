@@ -16,6 +16,11 @@ def transform_base_dimensions():
     df_location['LocationName'] = df_location['LocationName'].str.strip()
     df_location['LocationRequiredLevel'] = df_location['LocationRequiredLevel'].astype(int)
 
+    df_storage_type = pd.read_sql("SELECT * FROM raw.Dim_Storage_Type", engine)
+
+    df_storage_type = df_storage_type.dropna()
+    df_storage_type['StorageTypeName'] = df_storage_type['StorageTypeName'].str.strip()
+
 
 if __name__ == "__main__":
     SERVER = '.' 
