@@ -224,7 +224,31 @@ def transform_farm_facts(engine):
     ]]
 
     df_final_barn.to_sql('Fact_Barn', con=engine, if_exists='append',index=False)
-    print('Успішно! Fact_Pets_Livestock')
+    print('Успішно! Fact_Barn')
+    print('------------------------------')
+
+    df_silo = pd.read_sql("SELECT * FROM raw.Fact_Silo", engine)
+    db_storages = pd.read_sql("SELECT StorageID, FarmID FROM Dim_Storages WHERE StorageTypeID = 2", engine)
+    db_crops = pd.read_sql("SELECT CropID, CropName FROM Dim_Crops", engine)
+
+    df_silo = df_silo.dropna()
+    df_silo['FarmName'] = df_silo['FarmName'].str.strip()
+    df_silo['CropName'] = df_silo['CropName'].str.strip()
+    df_silo['CropCount'] = df_silo['CropCount'].astype(int)
+
+    df_silo = df_silo.merge(db_farms, on='FarmName', how='inner')
+    df_silo = df_silo.merge(db_storages, on='FarmID', how='inner')
+    df_silo = df_silo.merge(db_crops, on='CropName', how='inner')
+
+    df_final_silo = df_silo[[
+        'StorageID',
+        'FarmID',
+        'CropID',
+        'CropCount'
+    ]]
+
+    df_final_silo.to_sql('Fact_Silo', con=engine, if_exists='append',index=False)
+    print('Успішно! Fact_Silo')
     print('------------------------------')
 
     
