@@ -90,6 +90,34 @@ def transform_game_entities():
     print('Dim_Crops завантажено успішно!')
     print('------------------------------------')
 
+    df_products = pd.read_sql("SELECT * FROM raw.Dim_Products", engine)
+    db_buildings = pd.read_sql("SELECT BuildingName, BuildingID FROM Dim_Buildings", engine)
+
+    df_products = df_products.dropna()
+    df_products['ProductName'] = df_products['ProductName'].str.strip()
+    df_products['ProductRequiredLevel'] = df_products['ProductRequiredLevel'].astype(int)
+    df_products['ProductMaxPrice'] = df_products['ProductMaxPrice'].astype(int)
+    df_products['ProductExperience'] = df_products['ProductExperience'].astype(int)
+    df_products['ProductTimeMinutes'] = df_products['ProductTimeMinutes'].astype(int)
+    df_products['BuildingName'] = df_products['BuildingName'].str.strip()
+
+    df_products = df_products.merge(db_buildings, on='BuildingName', how='inner')
+
+    df_final_products = df_products[[
+        'ProductName',
+        'ProductRequiredLevel',
+        'ProductMaxPrice',
+        'ProductExperience',
+        'ProductTimeMinutes',
+        'BuildingID'
+    ]]
+
+    df_final_products.to_sql('Dim_Products', con=engine, if_exists='append',index=False)
+    print('Dim_Products завантажено успішно!')
+    print('------------------------------------')
+
+
+
 
 if __name__ == "__main__":
     SERVER = '.' 
