@@ -159,6 +159,30 @@ def transform_game_entities(engine):
     print('Dim_Animals завантажено успішно!')
     print('------------------------------------')
 
+def transform_farm_facts(engine):
+    df_farm_livestock = pd.read_sql("SELECT * FROM raw.Fact_Farm_Livestock", engine)
+    db_farms = pd.read_sql("SELECT FarmName, FarmID FROM Dim_Farms", engine)
+    db_animals = pd.read_sql("SELECT AnimalName, AnimalID FROM Dim_Animals", engine)
+
+    df_farm_livestock = df_farm_livestock.dropna()
+    df_farm_livestock['FarmName'] = df_farm_livestock['FarmName'].str.strip()
+    df_farm_livestock['AnimalName'] = df_farm_livestock['AnimalName'].str.strip()
+    df_farm_livestock['AnimalQuantity'] = df_farm_livestock['AnimalQuantity'].astype(int)
+
+    df_farm_livestock = df_farm_livestock.merge(db_farms, on='FarmName', how='inner')
+    df_farm_livestock = df_farm_livestock.merge(db_animals, on='AnimalName', how='inner')
+
+    df_final_farm_livestock = df_farm_livestock[[
+        'FarmID',
+        'AnimalID',
+        'AnimalQuantity'
+    ]]
+
+    df_final_farm_livestock.to_sql('Fact_Farm_Livestock', con=engine, if_exists='append', index=False)
+    print('Успішно! Fact_Farm_Livestock')
+    print('------------------------------')
+
+    
 
 if __name__ == "__main__":
     SERVER = '.' 
@@ -169,7 +193,8 @@ if __name__ == "__main__":
     try:
         print("(с2)... Підключення до сервера SQL Server...")
         engine = create_engine(connection_string)
-        # transform_base_dimensions()
+        # transform_base_dimensions(engine)
+        transform_game_entities(engine)
 
         print("(с2)...Конвеєр виконано без помилок! Перевіряй таблиці.")
         
