@@ -1,7 +1,7 @@
 import pandas as pd
 from sqlalchemy import create_engine
 
-def transform_base_dimensions():
+def transform_base_dimensions(engine):
     df_farms = pd.read_sql("SELECT * FROM raw.Dim_Farms", engine)
 
     df_farms = df_farms.dropna()
@@ -50,7 +50,7 @@ def transform_base_dimensions():
 
     df_final_storages.to_sql('Dim_Storages', con=engine, if_exists='append', index=False)
 
-def transform_game_entities(): 
+def transform_game_entities(engine): 
     df_buildings = pd.read_sql("SELECT * FROM raw.Dim_Buildings", engine)
     df_buildings = df_buildings.dropna()
 
