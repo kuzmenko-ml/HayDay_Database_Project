@@ -203,6 +203,29 @@ def transform_farm_facts(engine):
     print('Успішно! Fact_Pets_Livestock')
     print('------------------------------')
 
+    df_barn = pd.read_sql("SELECT * FROM raw.Fact_Barn", engine)
+    db_storages = pd.read_sql("SELECT StorageID FROM Dim_Storages WHERE StorageTypeID = 1", engine)
+    db_products = pd.read_sql("SELECT ProductID, ProductName FROM Dim_Products", engine)
+
+    df_barn = df_barn.dropna()
+    df_barn['FarmName'] = df_barn['FarmName'].str.strip()
+    df_barn['ProductName'] = df_barn['ProductName'].str.strip()
+    df_barn['ProductCount'] = df_barn['ProductCount'].astype(int)
+
+    df_barn = df_barn.merge(db_farms, on='FarmName', how='inner')
+    df_barn = df_barn.merge(db_storages, on='FarmID', how='inner')
+    df_barn = df_barn.merge(db_products, on='ProductName', how='inner')
+
+    df_final_barn = df_barn[[
+        'StorageID',
+        'FarmID',
+        'ProductID',
+        'ProductCount'
+    ]]
+
+    df_final_barn.to_sql('Fact_Barn', con=engine, if_exists='append',index=False)
+    print('Успішно! Fact_Pets_Livestock')
+    print('------------------------------')
 
     
 
