@@ -48,40 +48,15 @@ def load_game_entities(engine):
     print("Читання buildings.csv...")
     buildings_path = data_dir / 'buildings.csv'
     df_buildings = pd.read_csv(buildings_path) 
-
-    db_locations = pd.read_sql("SELECT LocationID, LocationName FROM Dim_Location", engine)
-    df_buildings = df_buildings.merge(db_locations, on='LocationName', how='inner')
-
-    df_final_buildings = df_buildings[[
-        'BuildingName', 
-        'BuildingRequiredLevel', 
-        'LocationID', 
-        'BuildingPrice', 
-        'ConstructionTimeMinutes'
-    ]]
-
-    df_final_buildings.to_sql('Dim_Buildings', con=engine,schema='raw', if_exists='replace', index=False)
-    print("Таблиця Dim_Buildings успішно заповнена з урахуванням FOREIGN KEY!")
+    df_buildings.to_sql('Dim_Buildings', con=engine,schema='raw', if_exists='replace', index=False)
+    print("Таблиця Dim_Buildings успішно заповнена!")
     print("----------------------------------------------------------------------------------")
 
     print("Читання products.csv...")
     products_path = data_dir / 'products.csv'
     df_products = pd.read_csv(products_path) 
-
-    db_buildings = pd.read_sql("SELECT BuildingID, BuildingName FROM Dim_Buildings", engine)
-    df_products = df_products.merge(db_buildings, on='BuildingName', how='inner')
-
-    df_final_products = df_products[[
-        'ProductName', 
-        'ProductRequiredLevel', 
-        'ProductMaxPrice', 
-        'ProductExperience', 
-        'ProductTimeMinutes',
-        'BuildingID'
-    ]]
-
-    df_final_products.to_sql('Dim_Products', con=engine, schema='raw', if_exists='replace', index=False)
-    print("Таблиця Dim_Products успішно заповнена з урахуванням FOREIGN KEY!")
+    df_products.to_sql('Dim_Products', con=engine, schema='raw', if_exists='replace', index=False)
+    print("Таблиця Dim_Products успішно заповнена!")
     print("----------------------------------------------------------------------------------")
 
     print("Читання crops.csv...")
@@ -94,38 +69,14 @@ def load_game_entities(engine):
     print("Читання pets.csv...")
     pets_path = data_dir / 'pets.csv'
     df_pets = pd.read_csv(pets_path)
-
-    db_products = pd.read_sql("SELECT ProductID, ProductName FROM Dim_Products", engine)
-    db_crops = pd.read_sql("SELECT CropID, CropName FROM Dim_Crops", engine)
-
-    df_pets = df_pets.merge(db_products, on='ProductName', how='left')
-    df_pets = df_pets.merge(db_crops, on='CropName', how='left')
-
-    df_final_pets = df_pets[[
-        'PetName',
-        'PetRequiredLevel',
-        'ProductID',
-        'CropID'
-    ]]
-
-    df_final_pets.to_sql('Dim_Pets', con=engine, schema='raw', if_exists='replace', index=False)
+    df_pets.to_sql('Dim_Pets', con=engine, schema='raw', if_exists='replace', index=False)
     print("Таблиця Dim_Pets успішно заповнена з урахуванням FOREIGN KEY!")
     print("----------------------------------------------------------------------------------")
 
     print("Читання animals.csv...")
     animals_path = data_dir / 'animals.csv'
     df_animals = pd.read_csv(animals_path)
-
-    df_animals = df_animals.merge(db_products, on='ProductName', how='inner')
-
-    df_final_animals = df_animals [[
-        'AnimalName',
-        'ProductID',
-        'ProductionTimeMinutes',
-        'AnimalRequiredLevel'
-    ]]
-
-    df_final_animals.to_sql('Dim_Animals', con=engine, schema='raw', if_exists='replace', index=False)
+    df_animals.to_sql('Dim_Animals', con=engine, schema='raw', if_exists='replace', index=False)
     print("Таблиця Dim_Animals успішно заповнена з урахуванням FOREIGN KEY!")
     print("----------------------------------------------------------------------------------")
 
@@ -253,7 +204,7 @@ if __name__ == "__main__":
         
         # це вже виконано
         # load_base_dimensions(engine)
-        # load_game_entities(engine)
+        load_game_entities(engine)
         # load_farm_facts(engine)
         
         print("Конвеєр виконано без помилок! Перевіряй таблиці.")
