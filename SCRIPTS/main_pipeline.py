@@ -182,6 +182,28 @@ def transform_farm_facts(engine):
     print('Успішно! Fact_Farm_Livestock')
     print('------------------------------')
 
+    df_pets_livestock = pd.read_sql("SELECT * FROM raw.Fact_Pets_Livestock", engine)
+    db_pets = pd.read_sql("SELECT PetID, PetName FROM Dim_Pets", engine)
+
+    df_pets_livestock = df_pets_livestock.dropna()
+    df_pets_livestock['FarmName'] = df_pets_livestock['FarmName'].str.strip()
+    df_pets_livestock['PetName'] = df_pets_livestock['PetName'].str.strip()
+    df_pets_livestock['PetQuantity'] = df_pets_livestock['PetQuantity'].astype(int)
+
+    df_pets_livestock =  df_pets_livestock.merge(db_farms, on='FarmName', how='inner')
+    df_pets_livestock =  df_pets_livestock.merge(db_pets, on='PetName', how='inner')
+
+    df_final_pets_livestock = df_pets_livestock[[
+        'FarmID',
+        'PetID',
+        'PetQuantity'
+    ]]
+
+    df_final_pets_livestock.to_sql('Fact_Pets_Livestock', con=engine, if_exists='append',index=False)
+    print('Успішно! Fact_Pets_Livestock')
+    print('------------------------------')
+
+
     
 
 if __name__ == "__main__":
