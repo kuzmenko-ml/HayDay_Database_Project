@@ -251,6 +251,34 @@ def transform_farm_facts(engine):
     print('Успішно! Fact_Silo')
     print('------------------------------')
 
+    df_buildings = pd.read_sql("SELECT * FROM raw.Fact_Buildings", engine)
+    db_buildings = pd.read_sql("SELECT BuildingName, BuildingID FROM Dim_Buildings", engine)
+    db_location = pd.read_sql("SELECT LocationName, LocationID FROM Dim_Location", engine)
+
+    df_buildings = df_buildings.dropna()
+    df_buildings['FarmName'] = df_buildings['FarmName'].str.strip()
+    df_buildings['BuildingName'] = df_buildings['BuildingName'].str.strip()
+    df_buildings['LocationName'] = df_buildings['LocationName'].str.strip()
+    df_buildings['ProductionSlots'] = df_buildings['ProductionSlots'].astype(int)
+    df_buildings['MasteryStars'] = df_buildings['MasteryStars'].astype(int)
+
+    df_buildings = df_buildings.merge(db_farms, on='FarmName', how='inner')
+    df_buildings = df_buildings.merge(db_location, on='LocationName', how='inner')
+    df_buildings = df_buildings.merge(db_buildings, on='BuildingName', how='inner')
+
+    df_final_buildings = df_buildings[[
+        'BuildingID',
+        'FarmID',
+        'LocationID',
+        'ProductionSlots',
+        'MasteryStars'
+    ]]
+
+    df_final_buildings.to_sql('Fact_Buildings', con=engine, if_exists='append',index=False)
+    print('Успішно! Fact_Buildings')
+    print('------------------------------')
+
+
     
 
 if __name__ == "__main__":
