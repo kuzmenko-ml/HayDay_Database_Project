@@ -204,7 +204,7 @@ def transform_farm_facts(engine):
     print('------------------------------')
 
     df_barn = pd.read_sql("SELECT * FROM raw.Fact_Barn", engine)
-    db_storages = pd.read_sql("SELECT StorageID FROM Dim_Storages WHERE StorageTypeID = 1", engine)
+    db_storages = pd.read_sql("SELECT StorageID, FarmID FROM Dim_Storages WHERE StorageTypeID = 1", engine)
     db_products = pd.read_sql("SELECT ProductID, ProductName FROM Dim_Products", engine)
 
     df_barn = df_barn.dropna()
