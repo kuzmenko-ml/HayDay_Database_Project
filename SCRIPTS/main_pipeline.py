@@ -139,6 +139,26 @@ def transform_game_entities():
     print('Dim_Pets завантажено успішно!')
     print('------------------------------------')
 
+    df_animals = pd.read_sql("SELECT * FROM raw.Dim_Animals", engine)
+
+    df_animals = df_animals.dropna()
+    df_animals['AnimalName'] = df_animals['AnimalName'].str.strip()
+    df_animals['ProductionTimeMinutes'] = df_animals['ProductionTimeMinutes'].astype(int)
+    df_animals['AnimalRequiredLevel'] = df_animals['AnimalRequiredLevel'].astype(int)
+
+    df_animals = df_animals.merge(db_products, on='ProductName', how='inner')
+
+    df_final_animals = df_animals[[
+        'AnimalName',
+        'ProductID',
+        'ProductionTimeMinutes',
+        'AnimalRequiredLevel'
+    ]]
+
+    df_final_animals.to_sql('Dim_Animals', con=engine, if_exists='append', index=False)
+    print('Dim_Animals завантажено успішно!')
+    print('------------------------------------')
+
 
 if __name__ == "__main__":
     SERVER = '.' 
