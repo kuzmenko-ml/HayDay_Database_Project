@@ -88,107 +88,36 @@ def load_farm_facts(engine):
     print("Читання farm_livestock.csv...")
     farm_livestock_path = data_dir / 'farm_livestock.csv'
     df_farm_livestock = pd.read_csv(farm_livestock_path) 
-
-    db_farms = pd.read_sql("SELECT FarmID, FarmName FROM Dim_Farms", engine)
-    db_animals = pd.read_sql("SELECT AnimalID, AnimalName FROM Dim_Animals", engine)
-
-    df_farm_livestock = df_farm_livestock.merge(db_farms, on='FarmName' ,how='inner',)
-    df_farm_livestock = df_farm_livestock.merge(db_animals, on='AnimalName' ,how='inner',)
-
-    df_final_farm_livestock = df_farm_livestock [[
-        'FarmID',
-        'AnimalID',
-        'AnimalQuantity'
-    ]]
-
-    df_final_farm_livestock.to_sql('Fact_Farm_Livestock', con=engine, schema='raw', if_exists='replace', index=False)
-    print("Таблиця Fact_Farm_Livestock успішно заповнена з урахуванням FOREIGN KEY!")
+    df_farm_livestock.to_sql('Fact_Farm_Livestock', con=engine, schema='raw', if_exists='replace', index=False)
+    print("Таблиця Fact_Farm_Livestock успішно заповнена!")
     print("----------------------------------------------------------------------------------")
 
     print("Читання pets_livestock.csv...")
     pets_livestock_path = data_dir / 'pets_livestock.csv'
     df_pets_livestock = pd.read_csv(pets_livestock_path)
-
-    db_pets = pd.read_sql("SELECT PetID, PetName FROM Dim_Pets", engine)
-
-    df_pets_livestock = df_pets_livestock.merge(db_farms, on='FarmName', how='inner')
-    df_pets_livestock = df_pets_livestock.merge(db_pets, on='PetName', how='inner')
-
-    df_final_pets_livestock = df_pets_livestock [[
-        'FarmID',
-        'PetID',
-        'PetQuantity'
-    ]]
-
-    df_final_pets_livestock.to_sql('Fact_Pets_Livestock', con=engine, schema='raw', if_exists='replace', index=False)
-    print("Таблиця Fact_Pets_Livestock успішно заповнена з урахуванням FOREIGN KEY!")
+    df_pets_livestock.to_sql('Fact_Pets_Livestock', con=engine, schema='raw', if_exists='replace', index=False)
+    print("Таблиця Fact_Pets_Livestock успішно заповнена!")
     print("----------------------------------------------------------------------------------")
 
     print("Читання barn.csv...")
     barn_path = data_dir / 'barn.csv'
     df_barn = pd.read_csv(barn_path)
-
-    db_storages = pd.read_sql("SELECT StorageID, FarmID FROM Dim_Storages WHERE StorageTypeID = 1", engine)
-    db_products = pd.read_sql("SELECT ProductID, ProductName FROM Dim_Products", engine)
-
-    df_barn = df_barn.merge(db_farms, on='FarmName', how='inner')
-    df_barn = df_barn.merge(db_products, on='ProductName', how='inner')
-    df_barn = df_barn.merge(db_storages, on='FarmID', how='inner')
-
-    df_final_barn = df_barn [[
-        'StorageID',
-        'FarmID',
-        'ProductID',
-        'ProductCount'
-    ]]
-
-    df_final_barn.to_sql('Fact_Barn', con=engine, schema='raw', if_exists='replace', index=False)
-    print("Таблиця Fact_Barn успішно заповнена з урахуванням FOREIGN KEY!")
+    df_barn.to_sql('Fact_Barn', con=engine, schema='raw', if_exists='replace', index=False)
+    print("Таблиця Fact_Barn успішно заповнена!")
     print("----------------------------------------------------------------------------------")
 
     print("Читання silo.csv...")
     silo_path = data_dir / 'silo.csv'
     df_silo = pd.read_csv(silo_path)
-
-    db_storages = pd.read_sql("SELECT StorageID, FarmID FROM Dim_Storages WHERE StorageTypeID = 2", engine)
-    db_crop = pd.read_sql("SELECT CropID, CropName FROM Dim_Crops", engine)
-
-    df_silo = df_silo.merge(db_farms, on='FarmName', how='inner')
-    df_silo = df_silo.merge(db_crop, on='CropName', how='inner')
-    df_silo = df_silo.merge(db_storages, on='FarmID', how='inner')
-
-    df_final_silo = df_silo [[
-        'StorageID',
-        'FarmID',
-        'CropID',
-        'CropCount'
-    ]]
-
-    df_final_silo.to_sql('Fact_Silo', con=engine, schema='raw', if_exists='replace', index=False)
-    print("Таблиця Fact_Silo успішно заповнена з урахуванням FOREIGN KEY!")
+    df_silo.to_sql('Fact_Silo', con=engine, schema='raw', if_exists='replace', index=False)
+    print("Таблиця Fact_Silo успішно заповнена!")
     print("----------------------------------------------------------------------------------")
 
     print("Читання fact_buildings.csv...")
     fact_buildings_path = data_dir / 'fact_buildings.csv'
     df_fact_buildings = pd.read_csv(fact_buildings_path)
-
-    db_buildings = pd.read_sql("SELECT BuildingID, BuildingName FROM Dim_Buildings", engine)
-    db_locations = pd.read_sql("SELECT LocationID, LocationName FROM Dim_Location", engine)
-
-    df_fact_buildings = df_fact_buildings.merge(db_buildings, on='BuildingName', how='inner')
-    df_fact_buildings = df_fact_buildings.merge(db_farms, on='FarmName', how='inner')
-    df_fact_buildings = df_fact_buildings.merge(db_locations, on='LocationName', how='inner')
-
-    df_final_fact_buildings = df_fact_buildings[[
-        'BuildingID',
-        'FarmID',
-        'LocationID',
-        'ProductionSlots',
-        'MasteryStars'
-    ]]
-
-    df_final_fact_buildings.to_sql('Fact_Buildings', con=engine, schema='raw', if_exists='replace', index=False)
-    print("Таблиця Fact_Buildings успішно заповнена з урахуванням FOREIGN KEY!")
+    df_fact_buildings.to_sql('Fact_Buildings', con=engine, schema='raw', if_exists='replace', index=False)
+    print("Таблиця Fact_Buildings успішно заповнена!")
     print("----------------------------------------------------------------------------------")
 
 
@@ -204,8 +133,8 @@ if __name__ == "__main__":
         
         # це вже виконано
         # load_base_dimensions(engine)
-        load_game_entities(engine)
-        # load_farm_facts(engine)
+        # load_game_entities(engine)
+        load_farm_facts(engine)
         
         print("Конвеєр виконано без помилок! Перевіряй таблиці.")
         
