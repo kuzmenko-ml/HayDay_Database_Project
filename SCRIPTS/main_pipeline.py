@@ -167,7 +167,7 @@ def transform_farm_facts(engine):
     db_farms = pd.read_sql("SELECT FarmName, FarmID FROM Dim_Farms", engine)
     db_animals = pd.read_sql("SELECT AnimalName, AnimalID FROM Dim_Animals", engine)
 
-    df_farm_livestock = df_farm_livestock.dropna()
+    df_farm_livestock = delete_null_data(df_farm_livestock)
     df_farm_livestock['FarmName'] = df_farm_livestock['FarmName'].str.strip()
     df_farm_livestock['AnimalName'] = df_farm_livestock['AnimalName'].str.strip()
     df_farm_livestock['AnimalQuantity'] = df_farm_livestock['AnimalQuantity'].astype(int)
@@ -188,7 +188,7 @@ def transform_farm_facts(engine):
     df_pets_livestock = pd.read_sql("SELECT * FROM raw.Fact_Pets_Livestock", engine)
     db_pets = pd.read_sql("SELECT PetID, PetName FROM Dim_Pets", engine)
 
-    df_pets_livestock = df_pets_livestock.dropna()
+    df_pets_livestock = delete_null_data(df_pets_livestock)
     df_pets_livestock['FarmName'] = df_pets_livestock['FarmName'].str.strip()
     df_pets_livestock['PetName'] = df_pets_livestock['PetName'].str.strip()
     df_pets_livestock['PetQuantity'] = df_pets_livestock['PetQuantity'].astype(int)
@@ -210,7 +210,7 @@ def transform_farm_facts(engine):
     db_storages = pd.read_sql("SELECT StorageID, FarmID FROM Dim_Storages WHERE StorageTypeID = 1", engine)
     db_products = pd.read_sql("SELECT ProductID, ProductName FROM Dim_Products", engine)
 
-    df_barn = df_barn.dropna()
+    df_barn = delete_null_data(df_barn)
     df_barn['FarmName'] = df_barn['FarmName'].str.strip()
     df_barn['ProductName'] = df_barn['ProductName'].str.strip()
     df_barn['ProductCount'] = df_barn['ProductCount'].astype(int)
@@ -234,7 +234,7 @@ def transform_farm_facts(engine):
     db_storages = pd.read_sql("SELECT StorageID, FarmID FROM Dim_Storages WHERE StorageTypeID = 2", engine)
     db_crops = pd.read_sql("SELECT CropID, CropName FROM Dim_Crops", engine)
 
-    df_silo = df_silo.dropna()
+    df_silo = delete_null_data(df_silo)
     df_silo['FarmName'] = df_silo['FarmName'].str.strip()
     df_silo['CropName'] = df_silo['CropName'].str.strip()
     df_silo['CropCount'] = df_silo['CropCount'].astype(int)
@@ -258,7 +258,7 @@ def transform_farm_facts(engine):
     db_buildings = pd.read_sql("SELECT BuildingName, BuildingID FROM Dim_Buildings", engine)
     db_location = pd.read_sql("SELECT LocationName, LocationID FROM Dim_Location", engine)
 
-    df_buildings = df_buildings.dropna()
+    df_buildings = delete_null_data(df_buildings)
     df_buildings['FarmName'] = df_buildings['FarmName'].str.strip()
     df_buildings['BuildingName'] = df_buildings['BuildingName'].str.strip()
     df_buildings['LocationName'] = df_buildings['LocationName'].str.strip()
