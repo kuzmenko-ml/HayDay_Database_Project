@@ -1,0 +1,58 @@
+[
+    {
+        "file_name": "farms.csv",
+        "table_name": "Dim_Farms"
+    },
+    {
+        "file_name": "locations.csv",
+        "table_name": "Dim_Location"
+    },
+    {
+        "file_name": "storage_types.csv",
+        "table_name": "Dim_Storage_Type"
+    },
+    {
+        "file_name": "storages.csv",
+        "table_name": "Dim_Storages"
+    },
+    {
+        "file_name": "animals.csv",
+        "table_name": "Dim_Animals"
+    },
+    {
+        "file_name": "pets.csv",
+        "table_name": "Dim_Pets"
+    },
+    {
+        "file_name": "products.csv",
+        "table_name": "Dim_Products"
+    },
+    {
+        "file_name": "crops.csv",
+        "table_name": "Dim_Crops"
+    },
+    {
+        "file_name": "buildings.csv",
+        "table_name": "Dim_Buildings"
+    },
+    {
+        "file_name": "farm_livestock.csv",
+        "table_name": "Fact_Farm_Livestock"
+    },
+    {
+        "file_name": "pets_livestock.csv",
+        "table_name": "Fact_Pets_Livestock"
+    },
+    {
+        "file_name": "barn.csv",
+        "table_name": "Fact_Barn"
+    },
+    {
+        "file_name": "silo.csv",
+        "table_name": "Fact_Silo"
+    },
+    {
+        "file_name": "fact_buildings.csv",
+        "table_name": "Fact_Buildings"
+    }
+]
