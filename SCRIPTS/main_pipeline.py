@@ -4,6 +4,12 @@ from sqlalchemy import create_engine
 def delete_null_data(df, columns=None):
     return df.dropna()
 
+def clean_text(df, columns):
+    for col in columns:
+        if col in df.columns:
+            df[col] = df[col].str.strip()
+    return df
+
 def transform_base_dimensions(engine):
     df_farms = pd.read_sql("SELECT * FROM raw.Dim_Farms", engine)
 
