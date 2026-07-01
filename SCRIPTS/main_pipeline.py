@@ -1,10 +1,13 @@
 import pandas as pd
 from sqlalchemy import create_engine
 
+def delete_null_data(df, columns=None):
+    return df.dropna()
+
 def transform_base_dimensions(engine):
     df_farms = pd.read_sql("SELECT * FROM raw.Dim_Farms", engine)
 
-    df_farms = df_farms.dropna()
+    df_farms = delete_null_data(df_farms)
     df_farms['FarmName'] = df_farms['FarmName'].str.strip()
     df_farms['FarmLevel'] = df_farms['FarmLevel'].astype(int)
     df_farms['FarmExperience'] = df_farms['FarmExperience'].astype(int)
@@ -14,7 +17,7 @@ def transform_base_dimensions(engine):
 
     df_location = pd.read_sql("SELECT * FROM raw.Dim_Location", engine)
 
-    df_location = df_location.dropna()
+    df_location = delete_null_data(df_location)
     df_location['LocationName'] = df_location['LocationName'].str.strip()
     df_location['LocationRequiredLevel'] = df_location['LocationRequiredLevel'].astype(int)
 
@@ -22,7 +25,7 @@ def transform_base_dimensions(engine):
 
     df_storage_type = pd.read_sql("SELECT * FROM raw.Dim_Storage_Type", engine)
 
-    df_storage_type = df_storage_type.dropna()
+    df_storage_type = delete_null_data(df_storage_type)
     df_storage_type['StorageTypeName'] = df_storage_type['StorageTypeName'].str.strip()
 
     df_storage_type.to_sql('Dim_Storage_Type', con=engine, if_exists='append', index=False)
@@ -278,9 +281,6 @@ def transform_farm_facts(engine):
     print('Успішно! Fact_Buildings')
     print('------------------------------')
 
-
-    
-
 if __name__ == "__main__":
     SERVER = '.' 
     DATABASE = 'HayDay_Farm'  
@@ -291,7 +291,8 @@ if __name__ == "__main__":
         print("(с2)... Підключення до сервера SQL Server...")
         engine = create_engine(connection_string)
         # transform_base_dimensions(engine)
-        transform_game_entities(engine)
+        # transform_game_entities(engine)
+        transform_farm_facts(engine)
 
         print("(с2)...Конвеєр виконано без помилок! Перевіряй таблиці.")
         
