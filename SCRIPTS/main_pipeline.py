@@ -171,8 +171,7 @@ def transform_farm_facts(engine):
     db_animals = pd.read_sql("SELECT AnimalName, AnimalID FROM Dim_Animals", engine)
 
     df_farm_livestock = delete_null_data(df_farm_livestock)
-    df_farm_livestock['FarmName'] = df_farm_livestock['FarmName'].str.strip()
-    df_farm_livestock['AnimalName'] = df_farm_livestock['AnimalName'].str.strip()
+    df_farm_livestock = clean_text(df_farm_livestock, ['FarmName','AnimalName'])
     df_farm_livestock['AnimalQuantity'] = df_farm_livestock['AnimalQuantity'].astype(int)
 
     df_farm_livestock = df_farm_livestock.merge(db_farms, on='FarmName', how='inner')
@@ -192,8 +191,7 @@ def transform_farm_facts(engine):
     db_pets = pd.read_sql("SELECT PetID, PetName FROM Dim_Pets", engine)
 
     df_pets_livestock = delete_null_data(df_pets_livestock)
-    df_pets_livestock['FarmName'] = df_pets_livestock['FarmName'].str.strip()
-    df_pets_livestock['PetName'] = df_pets_livestock['PetName'].str.strip()
+    df_pets_livestock = clean_text(df_pets_livestock, ['FarmName','PetName'])
     df_pets_livestock['PetQuantity'] = df_pets_livestock['PetQuantity'].astype(int)
 
     df_pets_livestock =  df_pets_livestock.merge(db_farms, on='FarmName', how='inner')
@@ -214,8 +212,7 @@ def transform_farm_facts(engine):
     db_products = pd.read_sql("SELECT ProductID, ProductName FROM Dim_Products", engine)
 
     df_barn = delete_null_data(df_barn)
-    df_barn['FarmName'] = df_barn['FarmName'].str.strip()
-    df_barn['ProductName'] = df_barn['ProductName'].str.strip()
+    df_barn = clean_text(df_barn, ['FarmName', 'ProductName'])
     df_barn['ProductCount'] = df_barn['ProductCount'].astype(int)
 
     df_barn = df_barn.merge(db_farms, on='FarmName', how='inner')
@@ -238,8 +235,7 @@ def transform_farm_facts(engine):
     db_crops = pd.read_sql("SELECT CropID, CropName FROM Dim_Crops", engine)
 
     df_silo = delete_null_data(df_silo)
-    df_silo['FarmName'] = df_silo['FarmName'].str.strip()
-    df_silo['CropName'] = df_silo['CropName'].str.strip()
+    df_silo = clean_text(df_silo, ['FarmName','CropName'])
     df_silo['CropCount'] = df_silo['CropCount'].astype(int)
 
     df_silo = df_silo.merge(db_farms, on='FarmName', how='inner')
@@ -262,9 +258,7 @@ def transform_farm_facts(engine):
     db_location = pd.read_sql("SELECT LocationName, LocationID FROM Dim_Location", engine)
 
     df_buildings = delete_null_data(df_buildings)
-    df_buildings['FarmName'] = df_buildings['FarmName'].str.strip()
-    df_buildings['BuildingName'] = df_buildings['BuildingName'].str.strip()
-    df_buildings['LocationName'] = df_buildings['LocationName'].str.strip()
+    df_buildings = clean_text(df_buildings, ['FarmName','BuildingName','LocationName'])
     df_buildings['ProductionSlots'] = df_buildings['ProductionSlots'].astype(int)
     df_buildings['MasteryStars'] = df_buildings['MasteryStars'].astype(int)
 
