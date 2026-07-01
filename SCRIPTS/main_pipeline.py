@@ -14,7 +14,7 @@ def transform_base_dimensions(engine):
     df_farms = pd.read_sql("SELECT * FROM raw.Dim_Farms", engine)
 
     df_farms = delete_null_data(df_farms)
-    df_farms['FarmName'] = df_farms['FarmName'].str.strip()
+    df_farms = clean_text(df_farms, ['FarmName'])
     df_farms['FarmLevel'] = df_farms['FarmLevel'].astype(int)
     df_farms['FarmExperience'] = df_farms['FarmExperience'].astype(int)
     df_farms['FarmCreatedAt'] = pd.to_datetime(df_farms['FarmCreatedAt'])
@@ -24,7 +24,7 @@ def transform_base_dimensions(engine):
     df_location = pd.read_sql("SELECT * FROM raw.Dim_Location", engine)
 
     df_location = delete_null_data(df_location)
-    df_location['LocationName'] = df_location['LocationName'].str.strip()
+    df_location = clean_text(df_location, ['LocationName'])
     df_location['LocationRequiredLevel'] = df_location['LocationRequiredLevel'].astype(int)
 
     df_location.to_sql('Dim_Location', con=engine, if_exists='append', index=False)
@@ -32,7 +32,7 @@ def transform_base_dimensions(engine):
     df_storage_type = pd.read_sql("SELECT * FROM raw.Dim_Storage_Type", engine)
 
     df_storage_type = delete_null_data(df_storage_type)
-    df_storage_type['StorageTypeName'] = df_storage_type['StorageTypeName'].str.strip()
+    df_storage_type = clean_text(df_storage_type, ['StorageTypeName'])
 
     df_storage_type.to_sql('Dim_Storage_Type', con=engine, if_exists='append', index=False)
 
@@ -41,8 +41,7 @@ def transform_base_dimensions(engine):
     db_farms = pd.read_sql("SELECT FarmID, FarmName FROM Dim_Farms", engine)
     db_storage_types = pd.read_sql("SELECT StorageTypeID, StorageTypeName FROM Dim_Storage_Type", engine) 
 
-    df_storages['FarmName'] = df_storages['FarmName'].str.strip()
-    df_storages['StorageTypeName'] = df_storages['StorageTypeName'].str.strip()
+    df_storages = clean_text(df_storages, ['FarmName', 'StorageTypeName'])
 
     df_storages = df_storages.merge(db_farms, on='FarmName', how='inner')
     df_storages = df_storages.merge(db_storage_types, on='StorageTypeName', how='inner')
