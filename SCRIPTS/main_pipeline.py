@@ -64,11 +64,10 @@ def transform_game_entities(engine):
 
     db_location = pd.read_sql("SELECT LocationName, LocationID FROM Dim_Location", engine)
 
-    df_buildings['LocationName'] = df_buildings['LocationName'].str.strip()
+    df_buildings = clean_text(df_buildings, ['LocationName', 'BuildingName'])
 
     df_buildings = df_buildings.merge(db_location, on='LocationName', how='inner')
 
-    df_buildings['BuildingName'] = df_buildings['BuildingName'].str.strip()
     df_buildings['BuildingRequiredLevel'] = df_buildings['BuildingRequiredLevel'].astype(int)
     df_buildings['LocationID'] = df_buildings['LocationID'].astype(int)
     df_buildings['BuildingPrice'] = df_buildings['BuildingPrice'].astype(int)
@@ -88,7 +87,7 @@ def transform_game_entities(engine):
 
     df_crops = pd.read_sql("SELECT * FROM raw.Dim_Crops", engine)
     df_crops = delete_null_data(df_crops)
-    df_crops['CropName'] = df_crops['CropName'].str.strip()
+    df_crops = clean_text(df_crops, ['CropName'])
     df_crops['CropRequiredLevel'] = df_crops['CropRequiredLevel'].astype(int)
     df_crops['CropExperience'] = df_crops['CropExperience'].astype(int)
     df_crops['CropTimeMinutes'] = df_crops['CropTimeMinutes'].astype(int)
@@ -102,12 +101,11 @@ def transform_game_entities(engine):
     db_buildings = pd.read_sql("SELECT BuildingName, BuildingID FROM Dim_Buildings", engine)
 
     df_products = delete_null_data(df_products)
-    df_products['ProductName'] = df_products['ProductName'].str.strip()
+    df_products = clean_text(df_products, ['ProductName','BuildingName'])
     df_products['ProductRequiredLevel'] = df_products['ProductRequiredLevel'].astype(int)
     df_products['ProductMaxPrice'] = df_products['ProductMaxPrice'].astype(int)
     df_products['ProductExperience'] = df_products['ProductExperience'].astype(int)
     df_products['ProductTimeMinutes'] = df_products['ProductTimeMinutes'].astype(int)
-    df_products['BuildingName'] = df_products['BuildingName'].str.strip()
 
     df_products = df_products.merge(db_buildings, on='BuildingName', how='inner')
 
@@ -130,7 +128,7 @@ def transform_game_entities(engine):
 
     df_pets = df_pets.dropna(subset=['PetName', 'PetRequiredLevel'], how='any')
     df_pets = df_pets.dropna(subset=['ProductName', 'CropName'], how='all')
-    df_pets['PetName'] = df_pets['PetName'].str.strip()
+    df_pets = clean_text(df_pets, ['PetName'])
     df_pets['PetRequiredLevel'] = df_pets['PetRequiredLevel'].astype(int)
 
     df_pets = df_pets.merge(db_products, on='ProductName', how='left')
@@ -150,7 +148,7 @@ def transform_game_entities(engine):
     df_animals = pd.read_sql("SELECT * FROM raw.Dim_Animals", engine)
 
     df_animals = delete_null_data(df_animals)
-    df_animals['AnimalName'] = df_animals['AnimalName'].str.strip()
+    df_animals = clean_text(df_animals, ['AnimalName'])
     df_animals['ProductionTimeMinutes'] = df_animals['ProductionTimeMinutes'].astype(int)
     df_animals['AnimalRequiredLevel'] = df_animals['AnimalRequiredLevel'].astype(int)
 
