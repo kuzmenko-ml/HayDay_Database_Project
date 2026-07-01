@@ -1,6 +1,7 @@
 import pandas as pd
 from sqlalchemy import create_engine
 from pathlib import Path
+import json as json
 
 def load_base_dimensions(engine):
     print("Старт завантаження базових довідників...")
@@ -120,6 +121,20 @@ def load_farm_facts(engine):
     print("Таблиця Fact_Buildings успішно заповнена!")
     print("----------------------------------------------------------------------------------")
 
+def load_raw_data(engine):
+    config_dir = Path(__file__).resolve().parent / 'raw_pipeline_config.json'
+    data_dir = Path(__file__).resolve().parent.parent / 'DATA'
+
+    with open(config_dir, 'r') as f:
+        config_data = json.load(f)
+
+    for i in config_data:
+        print('---------------------------------------')
+        print('||| Читаємо файл '+ i['file_name'] + '! |||')
+        df = pd.read_csv(data_dir / i['file_name'])
+        print(df)
+        df.to_sql(i['table_name'], con=engine, schema='raw', if_exists='replace', index=False)
+        print('||| Завантажено '+ i['file_name'] + ' у '+ i['table_name'] + ' |||')
 
 if __name__ == "__main__":
     SERVER = '.' 
@@ -134,7 +149,9 @@ if __name__ == "__main__":
         # це вже виконано
         # load_base_dimensions(engine)
         # load_game_entities(engine)
-        load_farm_facts(engine)
+        # load_farm_facts(engine)
+
+        # load_raw_data(engine)
         
         print("Конвеєр виконано без помилок! Перевіряй таблиці.")
         
