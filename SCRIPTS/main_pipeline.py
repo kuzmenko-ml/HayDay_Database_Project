@@ -55,7 +55,7 @@ def transform_base_dimensions(engine):
 
 def transform_game_entities(engine): 
     df_buildings = pd.read_sql("SELECT * FROM raw.Dim_Buildings", engine)
-    df_buildings = df_buildings.dropna()
+    df_buildings = delete_null_data(df_buildings)
 
     db_location = pd.read_sql("SELECT LocationName, LocationID FROM Dim_Location", engine)
 
@@ -82,7 +82,7 @@ def transform_game_entities(engine):
     print('------------------------------------')
 
     df_crops = pd.read_sql("SELECT * FROM raw.Dim_Crops", engine)
-    df_crops = df_crops.dropna()
+    df_crops = delete_null_data(df_crops)
     df_crops['CropName'] = df_crops['CropName'].str.strip()
     df_crops['CropRequiredLevel'] = df_crops['CropRequiredLevel'].astype(int)
     df_crops['CropExperience'] = df_crops['CropExperience'].astype(int)
@@ -96,7 +96,7 @@ def transform_game_entities(engine):
     df_products = pd.read_sql("SELECT * FROM raw.Dim_Products", engine)
     db_buildings = pd.read_sql("SELECT BuildingName, BuildingID FROM Dim_Buildings", engine)
 
-    df_products = df_products.dropna()
+    df_products = delete_null_data(df_products)
     df_products['ProductName'] = df_products['ProductName'].str.strip()
     df_products['ProductRequiredLevel'] = df_products['ProductRequiredLevel'].astype(int)
     df_products['ProductMaxPrice'] = df_products['ProductMaxPrice'].astype(int)
@@ -144,7 +144,7 @@ def transform_game_entities(engine):
 
     df_animals = pd.read_sql("SELECT * FROM raw.Dim_Animals", engine)
 
-    df_animals = df_animals.dropna()
+    df_animals = delete_null_data(df_animals)
     df_animals['AnimalName'] = df_animals['AnimalName'].str.strip()
     df_animals['ProductionTimeMinutes'] = df_animals['ProductionTimeMinutes'].astype(int)
     df_animals['AnimalRequiredLevel'] = df_animals['AnimalRequiredLevel'].astype(int)
