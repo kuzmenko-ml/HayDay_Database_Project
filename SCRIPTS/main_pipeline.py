@@ -22,16 +22,23 @@ def transform_base_dimensions(engine):
         df_location.to_sql('Dim_Location', con=engine, if_exists='append', index=False)
     except Exception as e:
         print('Помилка! Завантаження файлу Dim_Location не відбулося.')
-        
-    df_farms = pd.read_sql("SELECT * FROM raw.Dim_Farms", engine)
 
-    df_farms = delete_null_data(df_farms)
-    df_farms = clean_text(df_farms, ['FarmName'])
-    df_farms['FarmLevel'] = df_farms['FarmLevel'].astype(int)
-    df_farms['FarmExperience'] = df_farms['FarmExperience'].astype(int)
-    df_farms['FarmCreatedAt'] = pd.to_datetime(df_farms['FarmCreatedAt'])
+    farms_ok = True
+    storage_type_ok = True
 
-    df_farms.to_sql('Dim_Farms', con=engine, if_exists='append', index=False)
+    try:
+        df_farms = pd.read_sql("SELECT * FROM raw.Dim_Farms", engine)
+
+        df_farms = delete_null_data(df_farms)
+        df_farms = clean_text(df_farms, ['FarmName'])
+        df_farms['FarmLevel'] = df_farms['FarmLevel'].astype(int)
+        df_farms['FarmExperience'] = df_farms['FarmExperience'].astype(int)
+        df_farms['FarmCreatedAt'] = pd.to_datetime(df_farms['FarmCreatedAt'])
+
+        df_farms.to_sql('Dim_Farms', con=engine, if_exists='append', index=False)
+    except Exception as e:
+        print('Помилка! Завантаження файлу Dim_Farms не відбулося.')
+        farms_ok = False
 
     df_storage_type = pd.read_sql("SELECT * FROM raw.Dim_Storage_Type", engine)
 
