@@ -132,9 +132,14 @@ def load_raw_data(engine):
         print('---------------------------------------')
         print('||| Читаємо файл '+ i['file_name'] + '! |||')
         df = pd.read_csv(data_dir / i['file_name'])
-        print(df)
-        df.to_sql(i['table_name'], con=engine, schema='raw', if_exists='replace', index=False)
-        print('||| Завантажено '+ i['file_name'] + ' у '+ i['table_name'] + ' |||')
+        if df.empty:
+            print('ПОМИЛКА! Порожній файл. Конвеєр пропускає його.')
+            continue
+        else:
+            # print(df)
+            df.to_sql(i['table_name'], con=engine, schema='raw', if_exists='replace', index=False)
+            print('||| Завантажено '+ i['file_name'] + ' у '+ i['table_name'] + ' |||')
+        
 
 if __name__ == "__main__":
     SERVER = '.' 
@@ -145,13 +150,8 @@ if __name__ == "__main__":
     try:
         print("Підключення до сервера SQL Server...")
         engine = create_engine(connection_string)
-        
-        # це вже виконано
-        # load_base_dimensions(engine)
-        # load_game_entities(engine)
-        # load_farm_facts(engine)
 
-        # load_raw_data(engine)
+        load_raw_data(engine)
         
         print("Конвеєр виконано без помилок! Перевіряй таблиці.")
         
