@@ -51,27 +51,33 @@ def transform_base_dimensions(engine):
         print('Помилка! Завантаження файлу Dim_Storage_Type не відбулося.')
         storage_type_ok = False
 
-    df_storages = pd.read_sql("SELECT * FROM raw.Dim_Storages", engine)
+    if farms_ok and storage_type_ok:
+        try:
+            df_storages = pd.read_sql("SELECT * FROM raw.Dim_Storages", engine)
 
-    db_farms = pd.read_sql("SELECT FarmID, FarmName FROM Dim_Farms", engine)
-    db_storage_types = pd.read_sql("SELECT StorageTypeID, StorageTypeName FROM Dim_Storage_Type", engine) 
+            db_farms = pd.read_sql("SELECT FarmID, FarmName FROM Dim_Farms", engine)
+            db_storage_types = pd.read_sql("SELECT StorageTypeID, StorageTypeName FROM Dim_Storage_Type", engine) 
 
-    df_storages = clean_text(df_storages, ['FarmName', 'StorageTypeName'])
+            df_storages = clean_text(df_storages, ['FarmName', 'StorageTypeName'])
 
-    df_storages = df_storages.merge(db_farms, on='FarmName', how='inner')
-    df_storages = df_storages.merge(db_storage_types, on='StorageTypeName', how='inner')
+            df_storages = df_storages.merge(db_farms, on='FarmName', how='inner')
+            df_storages = df_storages.merge(db_storage_types, on='StorageTypeName', how='inner')
 
-    df_storages['FarmID'] = df_storages['FarmID'].astype(int)
-    df_storages['StorageTypeID'] = df_storages['StorageTypeID'].astype(int)
-    df_storages['StorageCapacity'] = df_storages['StorageCapacity'].astype(int)
+            df_storages['FarmID'] = df_storages['FarmID'].astype(int)
+            df_storages['StorageTypeID'] = df_storages['StorageTypeID'].astype(int)
+            df_storages['StorageCapacity'] = df_storages['StorageCapacity'].astype(int)
 
-    df_final_storages = df_storages[[
-        'FarmID',
-        'StorageTypeID',
-        'StorageCapacity'
-    ]]
+            df_final_storages = df_storages[[
+                'FarmID',
+                'StorageTypeID',
+                'StorageCapacity'
+            ]]
 
-    df_final_storages.to_sql('Dim_Storages', con=engine, if_exists='append', index=False)
+            df_final_storages.to_sql('Dim_Storages', con=engine, if_exists='append', index=False)
+        except Exception as e:
+            print('Помилка! Завантаження файлу Dim_Storages не відбулося.')  
+    else:
+        print('Помилка! Цей довідник не оновлено. Бо критичні довідники не оновились до нього.')
 
 def transform_game_entities(engine): 
     df_buildings = pd.read_sql("SELECT * FROM raw.Dim_Buildings", engine)
