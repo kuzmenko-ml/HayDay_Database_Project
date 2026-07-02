@@ -40,12 +40,16 @@ def transform_base_dimensions(engine):
         print('Помилка! Завантаження файлу Dim_Farms не відбулося.')
         farms_ok = False
 
-    df_storage_type = pd.read_sql("SELECT * FROM raw.Dim_Storage_Type", engine)
+    try:
+        df_storage_type = pd.read_sql("SELECT * FROM raw.Dim_Storage_Type", engine)
 
-    df_storage_type = delete_null_data(df_storage_type)
-    df_storage_type = clean_text(df_storage_type, ['StorageTypeName'])
+        df_storage_type = delete_null_data(df_storage_type)
+        df_storage_type = clean_text(df_storage_type, ['StorageTypeName'])
 
-    df_storage_type.to_sql('Dim_Storage_Type', con=engine, if_exists='append', index=False)
+        df_storage_type.to_sql('Dim_Storage_Type', con=engine, if_exists='append', index=False)
+    except Exception as e:
+        print('Помилка! Завантаження файлу Dim_Storage_Type не відбулося.')
+        storage_type_ok = False
 
     df_storages = pd.read_sql("SELECT * FROM raw.Dim_Storages", engine)
 
