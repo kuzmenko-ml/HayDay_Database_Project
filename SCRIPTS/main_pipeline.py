@@ -80,31 +80,39 @@ def transform_base_dimensions(engine):
         print('Помилка! Цей довідник не оновлено. Бо критичні довідники не оновились до нього.')
 
 def transform_game_entities(engine): 
-    df_buildings = pd.read_sql("SELECT * FROM raw.Dim_Buildings", engine)
-    df_buildings = delete_null_data(df_buildings)
+    buildings_ok = True
+    try:
+        df_buildings = pd.read_sql("SELECT * FROM raw.Dim_Buildings", engine)
+        df_buildings = delete_null_data(df_buildings)
 
-    db_location = pd.read_sql("SELECT LocationName, LocationID FROM Dim_Location", engine)
+        db_location = pd.read_sql("SELECT LocationName, LocationID FROM Dim_Location", engine)
+        if db_location.empty:
+            print('Помилка! Таблиця LocationName порожня. Зупиняю роботу')
+            buildings_ok = False
+        else:
+            df_buildings = clean_text(df_buildings, ['LocationName', 'BuildingName'])
 
-    df_buildings = clean_text(df_buildings, ['LocationName', 'BuildingName'])
+            df_buildings = df_buildings.merge(db_location, on='LocationName', how='inner')
 
-    df_buildings = df_buildings.merge(db_location, on='LocationName', how='inner')
+            df_buildings['BuildingRequiredLevel'] = df_buildings['BuildingRequiredLevel'].astype(int)
+            df_buildings['LocationID'] = df_buildings['LocationID'].astype(int)
+            df_buildings['BuildingPrice'] = df_buildings['BuildingPrice'].astype(int)
+            df_buildings['ConstructionTimeMinutes'] = df_buildings['ConstructionTimeMinutes'].astype(int)
 
-    df_buildings['BuildingRequiredLevel'] = df_buildings['BuildingRequiredLevel'].astype(int)
-    df_buildings['LocationID'] = df_buildings['LocationID'].astype(int)
-    df_buildings['BuildingPrice'] = df_buildings['BuildingPrice'].astype(int)
-    df_buildings['ConstructionTimeMinutes'] = df_buildings['ConstructionTimeMinutes'].astype(int)
+            df_final_buildings = df_buildings[[
+                'BuildingName',
+                'BuildingRequiredLevel',
+                'LocationID',
+                'BuildingPrice',
+                'ConstructionTimeMinutes'
+            ]]
 
-    df_final_buildings = df_buildings[[
-        'BuildingName',
-        'BuildingRequiredLevel',
-        'LocationID',
-        'BuildingPrice',
-        'ConstructionTimeMinutes'
-    ]]
-
-    df_final_buildings.to_sql('Dim_Buildings', con=engine, if_exists='append', index=False)
-    print('Dim_Buildings завантажено успішно!')
-    print('------------------------------------')
+            df_final_buildings.to_sql('Dim_Buildings', con=engine, if_exists='append', index=False)
+            print('Dim_Buildings завантажено успішно!')
+            print('------------------------------------')
+    except Exception as e:
+        print('Помилка! Завантаження файлу Dim_Buildings не відбулося.')
+        buildings_ok = False
 
     df_crops = pd.read_sql("SELECT * FROM raw.Dim_Crops", engine)
     df_crops = delete_null_data(df_crops)
