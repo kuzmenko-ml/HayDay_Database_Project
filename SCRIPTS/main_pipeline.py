@@ -12,13 +12,20 @@ def clean_text(df, columns):
 
 def transform_base_dimensions(engine):
     try:
-
         df_location = pd.read_sql("SELECT * FROM raw.Dim_Location", engine)
 
         df_location = delete_null_data(df_location)
         df_location = clean_text(df_location, ['LocationName'])
         df_location['LocationRequiredLevel'] = df_location['LocationRequiredLevel'].astype(int)
 
+        existing_names = []
+        try:
+            df_location_existing = pd.read_sql("SELECT LocationName FROM Dim_Location", engine)
+            existing_names = df_location_existing['LocationName'].tolist()
+        except:
+            pass
+
+        df_location = df_location[~df_location['LocationName'].isin(existing_names)]
         df_location.to_sql('Dim_Location', con=engine, if_exists='append', index=False)
     except Exception as e:
         print('Помилка! Завантаження файлу Dim_Location не відбулося.')
