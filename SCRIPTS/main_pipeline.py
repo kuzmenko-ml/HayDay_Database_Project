@@ -11,6 +11,18 @@ def clean_text(df, columns):
     return df
 
 def transform_base_dimensions(engine):
+    try:
+
+        df_location = pd.read_sql("SELECT * FROM raw.Dim_Location", engine)
+
+        df_location = delete_null_data(df_location)
+        df_location = clean_text(df_location, ['LocationName'])
+        df_location['LocationRequiredLevel'] = df_location['LocationRequiredLevel'].astype(int)
+
+        df_location.to_sql('Dim_Location', con=engine, if_exists='append', index=False)
+    except Exception as e:
+        print('Помилка! Завантаження файлу Dim_Location не відбулося.')
+        
     df_farms = pd.read_sql("SELECT * FROM raw.Dim_Farms", engine)
 
     df_farms = delete_null_data(df_farms)
@@ -20,14 +32,6 @@ def transform_base_dimensions(engine):
     df_farms['FarmCreatedAt'] = pd.to_datetime(df_farms['FarmCreatedAt'])
 
     df_farms.to_sql('Dim_Farms', con=engine, if_exists='append', index=False)
-
-    df_location = pd.read_sql("SELECT * FROM raw.Dim_Location", engine)
-
-    df_location = delete_null_data(df_location)
-    df_location = clean_text(df_location, ['LocationName'])
-    df_location['LocationRequiredLevel'] = df_location['LocationRequiredLevel'].astype(int)
-
-    df_location.to_sql('Dim_Location', con=engine, if_exists='append', index=False)
 
     df_storage_type = pd.read_sql("SELECT * FROM raw.Dim_Storage_Type", engine)
 
