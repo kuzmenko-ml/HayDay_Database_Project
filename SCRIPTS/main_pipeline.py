@@ -362,30 +362,43 @@ def transform_farm_facts(engine):
     except Exception as e:
         print(f'Помилка! Скрипт упав під час обробки Fact_Silo. Деталі: {e}')
 
-    df_buildings = pd.read_sql("SELECT * FROM raw.Fact_Buildings", engine)
-    db_buildings = pd.read_sql("SELECT BuildingName, BuildingID FROM Dim_Buildings", engine)
-    db_location = pd.read_sql("SELECT LocationName, LocationID FROM Dim_Location", engine)
+    try:
+        df_buildings = pd.read_sql("SELECT * FROM raw.Fact_Buildings", engine)
+        db_buildings = pd.read_sql("SELECT BuildingName, BuildingID FROM Dim_Buildings", engine)
+        db_location = pd.read_sql("SELECT LocationName, LocationID FROM Dim_Location", engine)
+        db_farms = pd.read_sql("SELECT FarmName, FarmID FROM Dim_Farms", engine)
 
-    df_buildings = delete_null_data(df_buildings)
-    df_buildings = clean_text(df_buildings, ['FarmName','BuildingName','LocationName'])
-    df_buildings['ProductionSlots'] = df_buildings['ProductionSlots'].astype(int)
-    df_buildings['MasteryStars'] = df_buildings['MasteryStars'].astype(int)
+        initial_count = len(df_buildings)
 
-    df_buildings = df_buildings.merge(db_farms, on='FarmName', how='inner')
-    df_buildings = df_buildings.merge(db_location, on='LocationName', how='inner')
-    df_buildings = df_buildings.merge(db_buildings, on='BuildingName', how='inner')
+        df_buildings = delete_null_data(df_buildings)
+        df_buildings = clean_text(df_buildings, ['FarmName','BuildingName','LocationName'])
+        df_buildings['ProductionSlots'] = df_buildings['ProductionSlots'].astype(int)
+        df_buildings['MasteryStars'] = df_buildings['MasteryStars'].astype(int)
 
-    df_final_buildings = df_buildings[[
-        'BuildingID',
-        'FarmID',
-        'LocationID',
-        'ProductionSlots',
-        'MasteryStars'
-    ]]
+        df_buildings = df_buildings.merge(db_farms, on='FarmName', how='inner')
+        df_buildings = df_buildings.merge(db_location, on='LocationName', how='inner')
+        df_buildings = df_buildings.merge(db_buildings, on='BuildingName', how='inner')
 
-    df_final_buildings.to_sql('Fact_Buildings', con=engine, if_exists='append',index=False)
-    print('Успішно! Fact_Buildings')
-    print('------------------------------')
+        if len(df_buildings) == 0 and initial_count > 0:
+            print('Попередження! Нова поставка Fact_Barn повністю анулювалася після мерджу! Дані в БД не додано.')
+        else:
+            if len(df_buildings) < initial_count:
+                print(f'Зверни увагу: {initial_count - len(df_buildings)} нових рядків фактів комори пропущено через невідповідність ключів.')
+
+            df_final_buildings = df_buildings[[
+                'BuildingID',
+                'FarmID',
+                'LocationID',
+                'ProductionSlots',
+                'MasteryStars'
+            ]]
+
+            df_final_buildings.to_sql('Fact_Buildings', con=engine, if_exists='append',index=False)
+            print('Успішно! Fact_Buildings')
+        print('------------------------------')
+    except Exception as e:
+        print(f'Помилка! Скрипт упав під час обробки Fact_Buildings. Деталі: {e}')
+
 
 if __name__ == "__main__":
     SERVER = '.' 
