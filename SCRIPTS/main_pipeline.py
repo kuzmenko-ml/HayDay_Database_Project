@@ -260,25 +260,35 @@ def transform_farm_facts(engine):
         print(f'Помилка! Скрипт упав під час обробки Fact_Farm_Livestock. Деталі: {e}')
         print('------------------------------')
 
-    df_pets_livestock = pd.read_sql("SELECT * FROM raw.Fact_Pets_Livestock", engine)
-    db_pets = pd.read_sql("SELECT PetID, PetName FROM Dim_Pets", engine)
+    try:
+        df_pets_livestock = pd.read_sql("SELECT * FROM raw.Fact_Pets_Livestock", engine)
+        db_pets = pd.read_sql("SELECT PetID, PetName FROM Dim_Pets", engine)
+        db_farms = pd.read_sql("SELECT FarmID, FarmName FROM Dim_Farms", engine)
 
-    df_pets_livestock = delete_null_data(df_pets_livestock)
-    df_pets_livestock = clean_text(df_pets_livestock, ['FarmName','PetName'])
-    df_pets_livestock['PetQuantity'] = df_pets_livestock['PetQuantity'].astype(int)
+        df_pets_livestock = delete_null_data(df_pets_livestock)
+        df_pets_livestock = clean_text(df_pets_livestock, ['FarmName','PetName'])
+        df_pets_livestock['PetQuantity'] = df_pets_livestock['PetQuantity'].astype(int)
 
-    df_pets_livestock =  df_pets_livestock.merge(db_farms, on='FarmName', how='inner')
-    df_pets_livestock =  df_pets_livestock.merge(db_pets, on='PetName', how='inner')
+        df_pets_livestock =  df_pets_livestock.merge(db_farms, on='FarmName', how='inner')
+        df_pets_livestock =  df_pets_livestock.merge(db_pets, on='PetName', how='inner')
 
-    df_final_pets_livestock = df_pets_livestock[[
-        'FarmID',
-        'PetID',
-        'PetQuantity'
-    ]]
+        if len(df_pets_livestock) == 0 and initial_count > 0:
+            print('Попередження! Нова поставка Fact_Pets_Livestock повністю анулювалася після мерджу! Дані в БД не додано.')
+        else:
+            if len(df_pets_livestock) < initial_count:
+                print(f'Зверни увагу: {initial_count - len(df_pets_livestock)} нових рядків фактів пропущено через невідповідність імен у довідниках.')
 
-    df_final_pets_livestock.to_sql('Fact_Pets_Livestock', con=engine, if_exists='append',index=False)
-    print('Успішно! Fact_Pets_Livestock')
-    print('------------------------------')
+            df_final_pets_livestock = df_pets_livestock[[
+                'FarmID',
+                'PetID',
+                'PetQuantity'
+            ]]
+
+            df_final_pets_livestock.to_sql('Fact_Pets_Livestock', con=engine, if_exists='append',index=False)
+            print('Успішно! Fact_Pets_Livestock')
+        print('------------------------------')
+    except Exception as e:
+        print(f'Помилка! Скрипт упав під час обробки Fact_Pets_Livestock. Деталі: {e}')
 
     df_barn = pd.read_sql("SELECT * FROM raw.Fact_Barn", engine)
     db_storages = pd.read_sql("SELECT StorageID, FarmID FROM Dim_Storages WHERE StorageTypeID = 1", engine)
