@@ -121,6 +121,41 @@ def transform_game_entities(engine):
         print('Помилка! Завантаження файлу Dim_Buildings не відбулося.')
         buildings_ok = False
 
+    products_ok = True
+    if buildings_ok:
+        try:
+            df_products = pd.read_sql("SELECT * FROM raw.Dim_Products", engine)
+            db_buildings = pd.read_sql("SELECT BuildingName, BuildingID FROM Dim_Buildings", engine)
+
+            df_products = delete_null_data(df_products)
+            df_products = clean_text(df_products, ['ProductName','BuildingName'])
+            df_products['ProductRequiredLevel'] = df_products['ProductRequiredLevel'].astype(int)
+            df_products['ProductMaxPrice'] = df_products['ProductMaxPrice'].astype(int)
+            df_products['ProductExperience'] = df_products['ProductExperience'].astype(int)
+            df_products['ProductTimeMinutes'] = df_products['ProductTimeMinutes'].astype(int)
+
+            df_products = df_products.merge(db_buildings, on='BuildingName', how='inner')
+
+            df_final_products = df_products[[
+                'ProductName',
+                'ProductRequiredLevel',
+                'ProductMaxPrice',
+                'ProductExperience',
+                'ProductTimeMinutes',
+                'BuildingID'
+            ]]
+
+            df_final_products.to_sql('Dim_Products', con=engine, if_exists='append',index=False)
+            print('Dim_Products завантажено успішно!')
+            print('------------------------------------')
+
+        except Exception as e:
+            print('Помилка! Завантаження файлу Dim_Products не відбулося.')
+            products_ok = False
+    else:
+        print()
+        products_ok = False
+
     df_crops = pd.read_sql("SELECT * FROM raw.Dim_Crops", engine)
     df_crops = delete_null_data(df_crops)
     df_crops = clean_text(df_crops, ['CropName'])
@@ -131,31 +166,6 @@ def transform_game_entities(engine):
 
     df_crops.to_sql('Dim_Crops', con=engine, if_exists='append', index=False)
     print('Dim_Crops завантажено успішно!')
-    print('------------------------------------')
-
-    df_products = pd.read_sql("SELECT * FROM raw.Dim_Products", engine)
-    db_buildings = pd.read_sql("SELECT BuildingName, BuildingID FROM Dim_Buildings", engine)
-
-    df_products = delete_null_data(df_products)
-    df_products = clean_text(df_products, ['ProductName','BuildingName'])
-    df_products['ProductRequiredLevel'] = df_products['ProductRequiredLevel'].astype(int)
-    df_products['ProductMaxPrice'] = df_products['ProductMaxPrice'].astype(int)
-    df_products['ProductExperience'] = df_products['ProductExperience'].astype(int)
-    df_products['ProductTimeMinutes'] = df_products['ProductTimeMinutes'].astype(int)
-
-    df_products = df_products.merge(db_buildings, on='BuildingName', how='inner')
-
-    df_final_products = df_products[[
-        'ProductName',
-        'ProductRequiredLevel',
-        'ProductMaxPrice',
-        'ProductExperience',
-        'ProductTimeMinutes',
-        'BuildingID'
-    ]]
-
-    df_final_products.to_sql('Dim_Products', con=engine, if_exists='append',index=False)
-    print('Dim_Products завантажено успішно!')
     print('------------------------------------')
 
     df_pets = pd.read_sql("SELECT * FROM raw.Dim_Pets", engine)
