@@ -227,26 +227,38 @@ def transform_game_entities(engine):
         print('Помилка! Пропущено завантаження Dim_Pets, бо впали Dim_Crops або Dim_Products зламані.')
 
 def transform_farm_facts(engine):
-    df_farm_livestock = pd.read_sql("SELECT * FROM raw.Fact_Farm_Livestock", engine)
-    db_farms = pd.read_sql("SELECT FarmName, FarmID FROM Dim_Farms", engine)
-    db_animals = pd.read_sql("SELECT AnimalName, AnimalID FROM Dim_Animals", engine)
+    try:
+        df_farm_livestock = pd.read_sql("SELECT * FROM raw.Fact_Farm_Livestock", engine)
+        db_farms = pd.read_sql("SELECT FarmName, FarmID FROM Dim_Farms", engine)
+        db_animals = pd.read_sql("SELECT AnimalName, AnimalID FROM Dim_Animals", engine)
 
-    df_farm_livestock = delete_null_data(df_farm_livestock)
-    df_farm_livestock = clean_text(df_farm_livestock, ['FarmName','AnimalName'])
-    df_farm_livestock['AnimalQuantity'] = df_farm_livestock['AnimalQuantity'].astype(int)
+        initial_count = len(df_farm_livestock)
 
-    df_farm_livestock = df_farm_livestock.merge(db_farms, on='FarmName', how='inner')
-    df_farm_livestock = df_farm_livestock.merge(db_animals, on='AnimalName', how='inner')
+        df_farm_livestock = delete_null_data(df_farm_livestock)
+        df_farm_livestock = clean_text(df_farm_livestock, ['FarmName','AnimalName'])
+        df_farm_livestock['AnimalQuantity'] = df_farm_livestock['AnimalQuantity'].astype(int)
 
-    df_final_farm_livestock = df_farm_livestock[[
-        'FarmID',
-        'AnimalID',
-        'AnimalQuantity'
-    ]]
+        df_farm_livestock = df_farm_livestock.merge(db_farms, on='FarmName', how='inner')
+        df_farm_livestock = df_farm_livestock.merge(db_animals, on='AnimalName', how='inner')
 
-    df_final_farm_livestock.to_sql('Fact_Farm_Livestock', con=engine, if_exists='append', index=False)
-    print('Успішно! Fact_Farm_Livestock')
-    print('------------------------------')
+        if len(df_farm_livestock) == 0 and initial_count > 0:
+            print('Попередження! Нова поставка Fact_Farm_Livestock повністю анулювалася після мерджу! Дані в БД не додано.')
+        else:
+            if len(df_farm_livestock) < initial_count:
+                print(f'Зверни увагу: {initial_count - len(df_farm_livestock)} нових рядків фактів пропущено через невідповідність імен у довідниках.')
+
+        df_final_farm_livestock = df_farm_livestock[[
+            'FarmID',
+            'AnimalID',
+            'AnimalQuantity'
+        ]]
+
+        df_final_farm_livestock.to_sql('Fact_Farm_Livestock', con=engine, if_exists='append', index=False)
+        print('Успішно! Fact_Farm_Livestock')
+        print('------------------------------')
+    except Exception as e:
+        print(f'Помилка! Скрипт упав під час обробки Fact_Farm_Livestock. Деталі: {e}')
+        print('------------------------------')
 
     df_pets_livestock = pd.read_sql("SELECT * FROM raw.Fact_Pets_Livestock", engine)
     db_pets = pd.read_sql("SELECT PetID, PetName FROM Dim_Pets", engine)
