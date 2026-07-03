@@ -247,14 +247,14 @@ def transform_farm_facts(engine):
             if len(df_farm_livestock) < initial_count:
                 print(f'Зверни увагу: {initial_count - len(df_farm_livestock)} нових рядків фактів пропущено через невідповідність імен у довідниках.')
 
-        df_final_farm_livestock = df_farm_livestock[[
-            'FarmID',
-            'AnimalID',
-            'AnimalQuantity'
-        ]]
+            df_final_farm_livestock = df_farm_livestock[[
+                'FarmID',
+                'AnimalID',
+                'AnimalQuantity'
+            ]]
 
-        df_final_farm_livestock.to_sql('Fact_Farm_Livestock', con=engine, if_exists='append', index=False)
-        print('Успішно! Fact_Farm_Livestock')
+            df_final_farm_livestock.to_sql('Fact_Farm_Livestock', con=engine, if_exists='append', index=False)
+            print('Успішно! Частина або всі нові дані Fact_Farm_Livestock додані в БД.')
         print('------------------------------')
     except Exception as e:
         print(f'Помилка! Скрипт упав під час обробки Fact_Farm_Livestock. Деталі: {e}')
