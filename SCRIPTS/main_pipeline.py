@@ -327,28 +327,40 @@ def transform_farm_facts(engine):
     except Exception as e:
         print(f'Помилка! Скрипт упав під час обробки Fact_Barn. Деталі: {e}')
 
-    df_silo = pd.read_sql("SELECT * FROM raw.Fact_Silo", engine)
-    db_storages = pd.read_sql("SELECT StorageID, FarmID FROM Dim_Storages WHERE StorageTypeID = 2", engine)
-    db_crops = pd.read_sql("SELECT CropID, CropName FROM Dim_Crops", engine)
+    try:
+        df_silo = pd.read_sql("SELECT * FROM raw.Fact_Silo", engine)
+        db_storages = pd.read_sql("SELECT StorageID, FarmID FROM Dim_Storages WHERE StorageTypeID = 2", engine)
+        db_crops = pd.read_sql("SELECT CropID, CropName FROM Dim_Crops", engine)
+        db_farms = pd.read_sql("SELECT FarmName, FarmID FROM Dim_Farms", engine)
 
-    df_silo = delete_null_data(df_silo)
-    df_silo = clean_text(df_silo, ['FarmName','CropName'])
-    df_silo['CropCount'] = df_silo['CropCount'].astype(int)
+        initial_count = len(df_silo)
 
-    df_silo = df_silo.merge(db_farms, on='FarmName', how='inner')
-    df_silo = df_silo.merge(db_storages, on='FarmID', how='inner')
-    df_silo = df_silo.merge(db_crops, on='CropName', how='inner')
+        df_silo = delete_null_data(df_silo)
+        df_silo = clean_text(df_silo, ['FarmName','CropName'])
+        df_silo['CropCount'] = df_silo['CropCount'].astype(int)
 
-    df_final_silo = df_silo[[
-        'StorageID',
-        'FarmID',
-        'CropID',
-        'CropCount'
-    ]]
+        df_silo = df_silo.merge(db_farms, on='FarmName', how='inner')
+        df_silo = df_silo.merge(db_storages, on='FarmID', how='inner')
+        df_silo = df_silo.merge(db_crops, on='CropName', how='inner')
 
-    df_final_silo.to_sql('Fact_Silo', con=engine, if_exists='append',index=False)
-    print('Успішно! Fact_Silo')
-    print('------------------------------')
+        if len(df_silo) == 0 and initial_count > 0:
+            print('Попередження! Нова поставка Fact_Silo повністю анулювалася після мерджу! Дані в БД не додано.')
+        else:
+            if len(df_silo) < initial_count:
+                print(f'Зверни увагу: {initial_count - len(df_silo)} нових рядків фактів комори пропущено через невідповідність ключів.')
+
+            df_final_silo = df_silo[[
+                'StorageID',
+                'FarmID',
+                'CropID',
+                'CropCount'
+            ]]
+
+            df_final_silo.to_sql('Fact_Silo', con=engine, if_exists='append',index=False)
+            print('Успішно! Fact_Silo')
+        print('------------------------------')
+    except Exception as e:
+        print(f'Помилка! Скрипт упав під час обробки Fact_Silo. Деталі: {e}')
 
     df_buildings = pd.read_sql("SELECT * FROM raw.Fact_Buildings", engine)
     db_buildings = pd.read_sql("SELECT BuildingName, BuildingID FROM Dim_Buildings", engine)
