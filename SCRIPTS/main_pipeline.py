@@ -93,7 +93,7 @@ def transform_game_entities(engine):
         df_buildings = delete_null_data(df_buildings)
 
         db_location = pd.read_sql("SELECT LocationName, LocationID FROM Dim_Location", engine)
-        
+
         df_buildings = clean_text(df_buildings, ['LocationName', 'BuildingName'])
 
         df_buildings = df_buildings.merge(db_location, on='LocationName', how='inner')
@@ -153,6 +153,33 @@ def transform_game_entities(engine):
         print()
         products_ok = False
 
+    if products_ok:
+        try:
+            df_animals = pd.read_sql("SELECT * FROM raw.Dim_Animals", engine)
+            db_products = pd.read_sql("SELECT ProductName, ProductID FROM Dim_Products", engine)
+            
+            df_animals = delete_null_data(df_animals)
+            df_animals = clean_text(df_animals, ['AnimalName'])
+            df_animals['ProductionTimeMinutes'] = df_animals['ProductionTimeMinutes'].astype(int)
+            df_animals['AnimalRequiredLevel'] = df_animals['AnimalRequiredLevel'].astype(int)
+
+            df_animals = df_animals.merge(db_products, on='ProductName', how='inner')
+
+            df_final_animals = df_animals[[
+                'AnimalName',
+                'ProductID',
+                'ProductionTimeMinutes',
+                'AnimalRequiredLevel'
+            ]]
+
+            df_final_animals.to_sql('Dim_Animals', con=engine, if_exists='append', index=False)
+            print('Dim_Animals завантажено успішно!')
+            print('------------------------------------')
+        except Exception as e:
+            print('Помилка!Dim_Animals не оброблено.')
+    else:
+        print('Помилка!Необхідна таблиця порожня, тому Dim_Animals не оброблено.')
+
     df_crops = pd.read_sql("SELECT * FROM raw.Dim_Crops", engine)
     df_crops = delete_null_data(df_crops)
     df_crops = clean_text(df_crops, ['CropName'])
@@ -188,25 +215,6 @@ def transform_game_entities(engine):
     print('Dim_Pets завантажено успішно!')
     print('------------------------------------')
 
-    df_animals = pd.read_sql("SELECT * FROM raw.Dim_Animals", engine)
-
-    df_animals = delete_null_data(df_animals)
-    df_animals = clean_text(df_animals, ['AnimalName'])
-    df_animals['ProductionTimeMinutes'] = df_animals['ProductionTimeMinutes'].astype(int)
-    df_animals['AnimalRequiredLevel'] = df_animals['AnimalRequiredLevel'].astype(int)
-
-    df_animals = df_animals.merge(db_products, on='ProductName', how='inner')
-
-    df_final_animals = df_animals[[
-        'AnimalName',
-        'ProductID',
-        'ProductionTimeMinutes',
-        'AnimalRequiredLevel'
-    ]]
-
-    df_final_animals.to_sql('Dim_Animals', con=engine, if_exists='append', index=False)
-    print('Dim_Animals завантажено успішно!')
-    print('------------------------------------')
 
 def transform_farm_facts(engine):
     df_farm_livestock = pd.read_sql("SELECT * FROM raw.Fact_Farm_Livestock", engine)
