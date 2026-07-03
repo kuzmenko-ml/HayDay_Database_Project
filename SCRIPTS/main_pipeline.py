@@ -292,28 +292,40 @@ def transform_farm_facts(engine):
     except Exception as e:
         print(f'Помилка! Скрипт упав під час обробки Fact_Pets_Livestock. Деталі: {e}')
 
-    df_barn = pd.read_sql("SELECT * FROM raw.Fact_Barn", engine)
-    db_storages = pd.read_sql("SELECT StorageID, FarmID FROM Dim_Storages WHERE StorageTypeID = 1", engine)
-    db_products = pd.read_sql("SELECT ProductID, ProductName FROM Dim_Products", engine)
+    try:
+        df_barn = pd.read_sql("SELECT * FROM raw.Fact_Barn", engine)
+        db_storages = pd.read_sql("SELECT StorageID, FarmID FROM Dim_Storages WHERE StorageTypeID = 1", engine)
+        db_products = pd.read_sql("SELECT ProductID, ProductName FROM Dim_Products", engine)
+        db_farms = pd.read_sql("SELECT FarmName, FarmID FROM Dim_Farms", engine)
 
-    df_barn = delete_null_data(df_barn)
-    df_barn = clean_text(df_barn, ['FarmName', 'ProductName'])
-    df_barn['ProductCount'] = df_barn['ProductCount'].astype(int)
+        initial_count = len(df_barn)
 
-    df_barn = df_barn.merge(db_farms, on='FarmName', how='inner')
-    df_barn = df_barn.merge(db_storages, on='FarmID', how='inner')
-    df_barn = df_barn.merge(db_products, on='ProductName', how='inner')
+        df_barn = delete_null_data(df_barn)
+        df_barn = clean_text(df_barn, ['FarmName', 'ProductName'])
+        df_barn['ProductCount'] = df_barn['ProductCount'].astype(int)
 
-    df_final_barn = df_barn[[
-        'StorageID',
-        'FarmID',
-        'ProductID',
-        'ProductCount'
-    ]]
+        df_barn = df_barn.merge(db_farms, on='FarmName', how='inner')
+        df_barn = df_barn.merge(db_storages, on='FarmID', how='inner')
+        df_barn = df_barn.merge(db_products, on='ProductName', how='inner')
 
-    df_final_barn.to_sql('Fact_Barn', con=engine, if_exists='append',index=False)
-    print('Успішно! Fact_Barn')
-    print('------------------------------')
+        if len(df_barn) == 0 and initial_count > 0:
+            print('Попередження! Нова поставка Fact_Barn повністю анулювалася після мерджу! Дані в БД не додано.')
+        else:
+            if len(df_barn) < initial_count:
+                print(f'Зверни увагу: {initial_count - len(df_barn)} нових рядків фактів комори пропущено через невідповідність ключів.')
+
+            df_final_barn = df_barn[[
+                'StorageID',
+                'FarmID',
+                'ProductID',
+                'ProductCount'
+            ]]
+
+            df_final_barn.to_sql('Fact_Barn', con=engine, if_exists='append',index=False)
+            print('Успішно! Fact_Barn')
+        print('------------------------------')
+    except Exception as e:
+        print(f'Помилка! Скрипт упав під час обробки Fact_Barn. Деталі: {e}')
 
     df_silo = pd.read_sql("SELECT * FROM raw.Fact_Silo", engine)
     db_storages = pd.read_sql("SELECT StorageID, FarmID FROM Dim_Storages WHERE StorageTypeID = 2", engine)
