@@ -157,7 +157,7 @@ def transform_game_entities(engine):
         try:
             df_animals = pd.read_sql("SELECT * FROM raw.Dim_Animals", engine)
             db_products = pd.read_sql("SELECT ProductName, ProductID FROM Dim_Products", engine)
-            
+
             df_animals = delete_null_data(df_animals)
             df_animals = clean_text(df_animals, ['AnimalName'])
             df_animals['ProductionTimeMinutes'] = df_animals['ProductionTimeMinutes'].astype(int)
@@ -180,17 +180,22 @@ def transform_game_entities(engine):
     else:
         print('Помилка!Необхідна таблиця порожня, тому Dim_Animals не оброблено.')
 
-    df_crops = pd.read_sql("SELECT * FROM raw.Dim_Crops", engine)
-    df_crops = delete_null_data(df_crops)
-    df_crops = clean_text(df_crops, ['CropName'])
-    df_crops['CropRequiredLevel'] = df_crops['CropRequiredLevel'].astype(int)
-    df_crops['CropExperience'] = df_crops['CropExperience'].astype(int)
-    df_crops['CropTimeMinutes'] = df_crops['CropTimeMinutes'].astype(int)
-    df_crops['CropMaxPrice'] = df_crops['CropMaxPrice'].astype(int)
+    crops_ok = True
+    try:
+        df_crops = pd.read_sql("SELECT * FROM raw.Dim_Crops", engine)
+        df_crops = delete_null_data(df_crops)
+        df_crops = clean_text(df_crops, ['CropName'])
+        df_crops['CropRequiredLevel'] = df_crops['CropRequiredLevel'].astype(int)
+        df_crops['CropExperience'] = df_crops['CropExperience'].astype(int)
+        df_crops['CropTimeMinutes'] = df_crops['CropTimeMinutes'].astype(int)
+        df_crops['CropMaxPrice'] = df_crops['CropMaxPrice'].astype(int)
 
-    df_crops.to_sql('Dim_Crops', con=engine, if_exists='append', index=False)
-    print('Dim_Crops завантажено успішно!')
-    print('------------------------------------')
+        df_crops.to_sql('Dim_Crops', con=engine, if_exists='append', index=False)
+        print('Dim_Crops завантажено успішно!')
+        print('------------------------------------')
+    except Exception as e:
+        print('Помилка!')
+        crops_ok = False
 
     df_pets = pd.read_sql("SELECT * FROM raw.Dim_Pets", engine)
     db_products = pd.read_sql("SELECT ProductName, ProductID FROM Dim_Products", engine)
