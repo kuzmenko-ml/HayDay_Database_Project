@@ -265,6 +265,8 @@ def transform_farm_facts(engine):
         db_pets = pd.read_sql("SELECT PetID, PetName FROM Dim_Pets", engine)
         db_farms = pd.read_sql("SELECT FarmID, FarmName FROM Dim_Farms", engine)
 
+        initial_count = len(df_pets_livestock)
+
         df_pets_livestock = delete_null_data(df_pets_livestock)
         df_pets_livestock = clean_text(df_pets_livestock, ['FarmName','PetName'])
         df_pets_livestock['PetQuantity'] = df_pets_livestock['PetQuantity'].astype(int)
