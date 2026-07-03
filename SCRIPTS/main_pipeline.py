@@ -197,29 +197,34 @@ def transform_game_entities(engine):
         print('Помилка!')
         crops_ok = False
 
-    df_pets = pd.read_sql("SELECT * FROM raw.Dim_Pets", engine)
-    db_products = pd.read_sql("SELECT ProductName, ProductID FROM Dim_Products", engine)
-    db_crops = pd.read_sql("SELECT CropName, CropID FROM Dim_Crops", engine)
+    if products_ok and crops_ok:
+        try:
+            df_pets = pd.read_sql("SELECT * FROM raw.Dim_Pets", engine)
+            db_products = pd.read_sql("SELECT ProductName, ProductID FROM Dim_Products", engine)
+            db_crops = pd.read_sql("SELECT CropName, CropID FROM Dim_Crops", engine)
 
-    df_pets = df_pets.dropna(subset=['PetName', 'PetRequiredLevel'], how='any')
-    df_pets = df_pets.dropna(subset=['ProductName', 'CropName'], how='all')
-    df_pets = clean_text(df_pets, ['PetName'])
-    df_pets['PetRequiredLevel'] = df_pets['PetRequiredLevel'].astype(int)
+            df_pets = df_pets.dropna(subset=['PetName', 'PetRequiredLevel'], how='any')
+            df_pets = df_pets.dropna(subset=['ProductName', 'CropName'], how='all')
+            df_pets = clean_text(df_pets, ['PetName'])
+            df_pets['PetRequiredLevel'] = df_pets['PetRequiredLevel'].astype(int)
 
-    df_pets = df_pets.merge(db_products, on='ProductName', how='left')
-    df_pets = df_pets.merge(db_crops, on='CropName', how='left')
+            df_pets = df_pets.merge(db_products, on='ProductName', how='left')
+            df_pets = df_pets.merge(db_crops, on='CropName', how='left')
 
-    df_final_pets = df_pets[[
-        'PetName',
-        'PetRequiredLevel',
-        'ProductID',
-        'CropID'
-    ]]
+            df_final_pets = df_pets[[
+                'PetName',
+                'PetRequiredLevel',
+                'ProductID',
+                'CropID'
+            ]]
 
-    df_final_pets.to_sql('Dim_Pets', con=engine, if_exists='append',index=False)
-    print('Dim_Pets завантажено успішно!')
-    print('------------------------------------')
-
+            df_final_pets.to_sql('Dim_Pets', con=engine, if_exists='append',index=False)
+            print('Dim_Pets завантажено успішно!')
+            print('------------------------------------')
+        except Exception as e:
+            print(f'Помилка! Щось не так із даними Dim_Pets! Помилка: {e}')
+    else:
+        print('Помилка! Пропущено завантаження Dim_Pets, бо впали Dim_Crops або Dim_Products зламані.')
 
 def transform_farm_facts(engine):
     df_farm_livestock = pd.read_sql("SELECT * FROM raw.Fact_Farm_Livestock", engine)
