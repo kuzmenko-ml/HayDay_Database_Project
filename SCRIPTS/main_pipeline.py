@@ -72,7 +72,8 @@ class Hay_Day_ETL_pipeline:
 
                 db_farms = pd.read_sql("SELECT FarmID, FarmName FROM Dim_Farms", self.engine)
                 db_storage_types = pd.read_sql("SELECT StorageTypeID, StorageTypeName FROM Dim_Storage_Type", self.engine) 
-
+                
+                df_storages = self.delete_null_data(df_storages)
                 df_storages = self.clean_text(df_storages, ['FarmName', 'StorageTypeName'])
 
                 df_storages = df_storages.merge(db_farms, on='FarmName', how='inner')
