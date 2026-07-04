@@ -9,8 +9,8 @@ class Hay_Day_ETL_pipeline:
         self.connection_string = f"mssql+pyodbc://@{self.SERVER}/{self.DATABASE}?driver=ODBC+Driver+17+for+SQL+Server&trusted_connection=yes"
         self.engine = create_engine(self.connection_string)
     
-    def delete_null_data(self, df, columns=None):
-        return df.dropna()
+    def delete_null_data(self, df, columns=None, how='any'):
+        return df.dropna(subset=columns, how=how)
     
     def clean_text(self, df, columns):
         for col in columns:
