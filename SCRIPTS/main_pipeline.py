@@ -1,3 +1,4 @@
+import logging
 import pandas as pd
 from sqlalchemy import create_engine
 
@@ -30,13 +31,13 @@ class Hay_Day_ETL_pipeline:
             try:
                 df_location_existing = pd.read_sql("SELECT LocationName FROM Dim_Location", self.engine)
                 existing_names = df_location_existing['LocationName'].tolist()
-            except:
-                pass
+            except Exception as err:
+                logging.warning(f"Не вдалося зчитати існуючі локації (можливо, таблиця ще порожня): {err}")
 
             df_location = df_location[~df_location['LocationName'].isin(existing_names)]
             df_location.to_sql('Dim_Location', con=self.engine, if_exists='append', index=False)
         except Exception as e:
-            print('Помилка! Завантаження файлу Dim_Location не відбулося.')
+            logging.error(f"Помилка! Завантаження файлу Dim_Location не відбулося. Помилка: {e}")
 
         farms_ok = True
         storage_type_ok = True
@@ -52,7 +53,7 @@ class Hay_Day_ETL_pipeline:
 
             df_farms.to_sql('Dim_Farms', con=self.engine, if_exists='append', index=False)
         except Exception as e:
-            print('Помилка! Завантаження файлу Dim_Farms не відбулося.')
+            logging.error(f"Помилка! Завантаження файлу Dim_Farms не відбулося. Помилка: {e}")
             farms_ok = False
 
         try:
@@ -63,7 +64,7 @@ class Hay_Day_ETL_pipeline:
 
             df_storage_type.to_sql('Dim_Storage_Type', con=self.engine, if_exists='append', index=False)
         except Exception as e:
-            print('Помилка! Завантаження файлу Dim_Storage_Type не відбулося.')
+            logging.error(f"Помилка! Завантаження файлу Dim_Storage_Type не відбулося. Помилка: {e}")
             storage_type_ok = False
 
         if farms_ok and storage_type_ok:
@@ -91,9 +92,9 @@ class Hay_Day_ETL_pipeline:
 
                 df_final_storages.to_sql('Dim_Storages', con=self.engine, if_exists='append', index=False)
             except Exception as e:
-                print('Помилка! Завантаження файлу Dim_Storages не відбулося.')  
+                  logging.error(f"Помилка! Завантаження таблиці Dim_Storages не відбулося. Деталі: {e}")
         else:
-            print('Помилка! Цей довідник не оновлено. Бо критичні довідники не оновились до нього.')
+            logging.warning("Попередження! Довідник Dim_Storages не оновлено, бо критичні довідники (Farms/Storage Types) не оновилися до нього.")
 
     def transform_game_entities(self): 
         buildings_ok = True
