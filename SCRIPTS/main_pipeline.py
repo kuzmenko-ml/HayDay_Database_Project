@@ -212,8 +212,8 @@ class Hay_Day_ETL_pipeline:
                 db_products = pd.read_sql("SELECT ProductName, ProductID FROM Dim_Products", self.engine)
                 db_crops = pd.read_sql("SELECT CropName, CropID FROM Dim_Crops", self.engine)
 
-                df_pets = df_pets.dropna(subset=['PetName', 'PetRequiredLevel'], how='any')
-                df_pets = df_pets.dropna(subset=['ProductName', 'CropName'], how='all')
+                df_pets = df_pets.delete_null_data(subset=['PetName', 'PetRequiredLevel'])
+                df_pets = df_pets.delete_null_data(subset=['ProductName', 'CropName'], how='all')
                 df_pets = self.clean_text(df_pets, ['PetName'])
                 df_pets['PetRequiredLevel'] = df_pets['PetRequiredLevel'].astype(int)
 
