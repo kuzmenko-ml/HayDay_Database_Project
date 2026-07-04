@@ -122,10 +122,9 @@ class Hay_Day_ETL_pipeline:
             ]]
 
             df_final_buildings.to_sql('Dim_Buildings', con=self.engine, if_exists='append', index=False)
-            print('Dim_Buildings завантажено успішно!')
-            print('------------------------------------')
+            logging.info('Dim_Buildings завантажено успішно!')
         except Exception as e:
-            print('Помилка! Завантаження файлу Dim_Buildings не відбулося.')
+            logging.error(f'Помилка! Завантаження файлу Dim_Buildings не відбулося: {e}')
             buildings_ok = False
 
         products_ok = True
@@ -153,14 +152,12 @@ class Hay_Day_ETL_pipeline:
                 ]]
 
                 df_final_products.to_sql('Dim_Products', con=self.engine, if_exists='append',index=False)
-                print('Dim_Products завантажено успішно!')
-                print('------------------------------------')
-
+                logging.info('Dim_Products завантажено успішно!')
             except Exception as e:
-                print('Помилка! Завантаження файлу Dim_Products не відбулося.')
+                logging.error(f'Помилка! Завантаження файлу Dim_Products не відбулося: {e}')
                 products_ok = False
         else:
-            print('Помилка!Необхідна таблиця порожня, тому Dim_Products не оброблено.')
+            logging.warning('Необхідна таблиця порожня, тому Dim_Products не оброблено.')
             products_ok = False
 
         if products_ok:
@@ -183,12 +180,11 @@ class Hay_Day_ETL_pipeline:
                 ]]
 
                 df_final_animals.to_sql('Dim_Animals', con=self.engine, if_exists='append', index=False)
-                print('Dim_Animals завантажено успішно!')
-                print('------------------------------------')
+                logging.info('Dim_Animals завантажено успішно!')
             except Exception as e:
-                print('Помилка!Dim_Animals не оброблено.')
+                logging.error(f'Помилка!Dim_Animals не оброблено: {e}')
         else:
-            print('Помилка!Необхідна таблиця порожня, тому Dim_Animals не оброблено.')
+            logging.warning('Помилка!Необхідна таблиця порожня, тому Dim_Animals не оброблено.')
 
         crops_ok = True
         try:
@@ -201,10 +197,9 @@ class Hay_Day_ETL_pipeline:
             df_crops['CropMaxPrice'] = df_crops['CropMaxPrice'].astype(int)
 
             df_crops.to_sql('Dim_Crops', con=self.engine, if_exists='append', index=False)
-            print('Dim_Crops завантажено успішно!')
-            print('------------------------------------')
+            logging.info('Dim_Crops завантажено успішно!')
         except Exception as e:
-            print('Помилка!')
+            logging.error(f'Помилка! Завантаження файлу Dim_Crops не відбулося: {e}')
             crops_ok = False
 
         if products_ok and crops_ok:
@@ -229,12 +224,11 @@ class Hay_Day_ETL_pipeline:
                 ]]
 
                 df_final_pets.to_sql('Dim_Pets', con=self.engine, if_exists='append',index=False)
-                print('Dim_Pets завантажено успішно!')
-                print('------------------------------------')
+                logging.info('Dim_Pets завантажено успішно!')
             except Exception as e:
-                print(f'Помилка! Щось не так із даними Dim_Pets! Помилка: {e}')
+                logging.error(f'Помилка! Щось не так із даними Dim_Pets! Помилка: {e}')
         else:
-            print('Помилка! Пропущено завантаження Dim_Pets, бо впали Dim_Crops або Dim_Products зламані.')
+            logging.warning('Помилка! Пропущено завантаження Dim_Pets, бо впали Dim_Crops або Dim_Products зламані.')
 
     def transform_farm_facts(self):
         try:
