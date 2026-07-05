@@ -139,21 +139,3 @@ def load_raw_data(engine):
             # print(df)
             df.to_sql(i['table_name'], con=engine, schema='raw', if_exists='replace', index=False)
             print('||| Завантажено '+ i['file_name'] + ' у '+ i['table_name'] + ' |||')
-        
-
-if __name__ == "__main__":
-    SERVER = '.' 
-    DATABASE = 'HayDay_Farm'  
-    
-    connection_string = f"mssql+pyodbc://@{SERVER}/{DATABASE}?driver=ODBC+Driver+17+for+SQL+Server&trusted_connection=yes"
-    
-    try:
-        print("Підключення до сервера SQL Server...")
-        engine = create_engine(connection_string)
-
-        load_raw_data(engine)
-        
-        print("Конвеєр виконано без помилок! Перевіряй таблиці.")
-        
-    except Exception as e:
-        print(f"Помилка виконання конвеєра: {e}")
