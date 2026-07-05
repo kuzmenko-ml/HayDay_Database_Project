@@ -254,7 +254,7 @@ class Hay_Day_ETL_pipeline:
             else:
                 if len(df_farm_livestock) < initial_count:
                     logging.warning(f'Зверни увагу: {initial_count - len(df_farm_livestock)} нових рядків фактів пропущено через невідповідність імен у довідниках.')
-
+                    logging.warning("Успішно! АЛЕ ДАНІ ЗАВАНТАЖЕНО ЧАСТКОВО!")
                 df_final_farm_livestock = df_farm_livestock[[
                     'FarmID',
                     'AnimalID',
@@ -262,7 +262,7 @@ class Hay_Day_ETL_pipeline:
                 ]]
 
                 df_final_farm_livestock.to_sql('Fact_Farm_Livestock', con=self.engine, if_exists='append', index=False)
-                logging.info('Успішно! Частина або всі нові дані Fact_Farm_Livestock додані в БД.')
+                logging.info('Успішно! Fact_Farm_Livestock')
         except Exception as e:
             logging.error(f'Помилка! Скрипт упав під час обробки Fact_Farm_Livestock. Деталі: {e}')
 
