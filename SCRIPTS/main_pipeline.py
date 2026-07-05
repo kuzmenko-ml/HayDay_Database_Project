@@ -3,9 +3,9 @@ import pandas as pd
 from sqlalchemy import create_engine
 
 class Hay_Day_ETL_pipeline:
-    def __init__(self):
-        self.SERVER = '.' 
-        self.DATABASE = 'HayDay_Farm'  
+    def __init__(self, server=None, database=None):
+        self.SERVER = server if server else '.' 
+        self.DATABASE = database if database else 'HayDay_Farm' 
     
         self.connection_string = f"mssql+pyodbc://@{self.SERVER}/{self.DATABASE}?driver=ODBC+Driver+17+for+SQL+Server&trusted_connection=yes"
         self.engine = create_engine(self.connection_string)
