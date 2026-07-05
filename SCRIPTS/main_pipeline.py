@@ -36,6 +36,7 @@ class Hay_Day_ETL_pipeline:
 
             df_location = df_location[~df_location['LocationName'].isin(existing_names)]
             df_location.to_sql('Dim_Location', con=self.engine, if_exists='append', index=False)
+            logging.info("Dim_Location завантажено успішно!")
         except Exception as e:
             logging.error(f"Помилка! Завантаження файлу Dim_Location не відбулося. Помилка: {e}")
 
@@ -52,6 +53,7 @@ class Hay_Day_ETL_pipeline:
             df_farms['FarmCreatedAt'] = pd.to_datetime(df_farms['FarmCreatedAt'])
 
             df_farms.to_sql('Dim_Farms', con=self.engine, if_exists='append', index=False)
+            logging.info("Dim_Farms завантажено успішно!")
         except Exception as e:
             logging.error(f"Помилка! Завантаження файлу Dim_Farms не відбулося. Помилка: {e}")
             farms_ok = False
@@ -63,6 +65,7 @@ class Hay_Day_ETL_pipeline:
             df_storage_type = self.clean_text(df_storage_type, ['StorageTypeName'])
 
             df_storage_type.to_sql('Dim_Storage_Type', con=self.engine, if_exists='append', index=False)
+            logging.info("Dim_Storage_Type завантажено успішно!")
         except Exception as e:
             logging.error(f"Помилка! Завантаження файлу Dim_Storage_Type не відбулося. Помилка: {e}")
             storage_type_ok = False
@@ -91,6 +94,7 @@ class Hay_Day_ETL_pipeline:
                 ]]
 
                 df_final_storages.to_sql('Dim_Storages', con=self.engine, if_exists='append', index=False)
+                logging.info("Dim_Storages завантажено успішно!")
             except Exception as e:
                   logging.error(f"Помилка! Завантаження таблиці Dim_Storages не відбулося. Деталі: {e}")
         else:
