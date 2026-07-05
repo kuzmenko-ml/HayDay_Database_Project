@@ -250,10 +250,10 @@ class Hay_Day_ETL_pipeline:
             df_farm_livestock = df_farm_livestock.merge(db_animals, on='AnimalName', how='inner')
 
             if len(df_farm_livestock) == 0 and initial_count > 0:
-                logging.warning('Попередження! Нова поставка Fact_Farm_Livestock повністю анулювалася після мерджу! Дані в БД не додано.')
+                logging.warning("Попередження! Нова поставка Fact_Farm_Livestock повністю анулювалася після мерджу! Дані в БД не додано.")
             else:
                 if len(df_farm_livestock) < initial_count:
-                    logging.warning(f'Зверни увагу: {initial_count - len(df_farm_livestock)} нових рядків фактів пропущено через невідповідність імен у довідниках.')
+                    logging.warning(f"Зверни увагу: {initial_count - len(df_farm_livestock)} нових рядків фактів пропущено через невідповідність імен у довідниках.")
                     logging.warning("Успішно! АЛЕ ДАНІ ЗАВАНТАЖЕНО ЧАСТКОВО!")
                 df_final_farm_livestock = df_farm_livestock[[
                     'FarmID',
@@ -262,9 +262,9 @@ class Hay_Day_ETL_pipeline:
                 ]]
 
                 df_final_farm_livestock.to_sql('Fact_Farm_Livestock', con=self.engine, if_exists='append', index=False)
-                logging.info('Успішно! Fact_Farm_Livestock')
+                logging.info("Успішно! Fact_Farm_Livestock")
         except Exception as e:
-            logging.error(f'Помилка! Скрипт упав під час обробки Fact_Farm_Livestock. Деталі: {e}')
+            logging.error(f"Помилка! Скрипт упав під час обробки Fact_Farm_Livestock. Деталі: {e}")
 
         try:
             df_pets_livestock = pd.read_sql("SELECT * FROM raw.Fact_Pets_Livestock", self.engine)
@@ -281,10 +281,10 @@ class Hay_Day_ETL_pipeline:
             df_pets_livestock =  df_pets_livestock.merge(db_pets, on='PetName', how='inner')
 
             if len(df_pets_livestock) == 0 and initial_count > 0:
-                logging.warning('Попередження! Нова поставка Fact_Pets_Livestock повністю анулювалася після мерджу! Дані в БД не додано.')
+                logging.warning("Попередження! Нова поставка Fact_Pets_Livestock повністю анулювалася після мерджу! Дані в БД не додано.")
             else:
                 if len(df_pets_livestock) < initial_count:
-                    logging.warning(f'Зверни увагу: {initial_count - len(df_pets_livestock)} нових рядків фактів пропущено через невідповідність імен у довідниках.')
+                    logging.warning(f"Зверни увагу: {initial_count - len(df_pets_livestock)} нових рядків фактів пропущено через невідповідність імен у довідниках.")
 
                 df_final_pets_livestock = df_pets_livestock[[
                     'FarmID',
@@ -293,9 +293,9 @@ class Hay_Day_ETL_pipeline:
                 ]]
 
                 df_final_pets_livestock.to_sql('Fact_Pets_Livestock', con=self.engine, if_exists='append',index=False)
-                logging.info('Успішно! Fact_Pets_Livestock')
+                logging.info("Успішно! Fact_Pets_Livestock")
         except Exception as e:
-            logging.error(f'Помилка! Скрипт упав під час обробки Fact_Pets_Livestock. Деталі: {e}')
+            logging.error(f"Помилка! Скрипт упав під час обробки Fact_Pets_Livestock. Деталі: {e}")
 
         try:
             df_barn = pd.read_sql("SELECT * FROM raw.Fact_Barn", self.engine)
@@ -314,10 +314,10 @@ class Hay_Day_ETL_pipeline:
             df_barn = df_barn.merge(db_products, on='ProductName', how='inner')
 
             if len(df_barn) == 0 and initial_count > 0:
-                logging.warning('Попередження! Нова поставка Fact_Barn повністю анулювалася після мерджу! Дані в БД не додано.')
+                logging.warning("Попередження! Нова поставка Fact_Barn повністю анулювалася після мерджу! Дані в БД не додано.")
             else:
                 if len(df_barn) < initial_count:
-                    logging.warning(f'Зверни увагу: {initial_count - len(df_barn)} нових рядків фактів комори пропущено через невідповідність ключів.')
+                    logging.warning(f"Зверни увагу: {initial_count - len(df_barn)} нових рядків фактів комори пропущено через невідповідність ключів.")
 
                 df_final_barn = df_barn[[
                     'StorageID',
@@ -327,9 +327,9 @@ class Hay_Day_ETL_pipeline:
                 ]]
 
                 df_final_barn.to_sql('Fact_Barn', con=self.engine, if_exists='append',index=False)
-                logging.info('Успішно! Fact_Barn')
+                logging.info("Успішно! Fact_Barn")
         except Exception as e:
-            logging.error(f'Помилка! Скрипт упав під час обробки Fact_Barn. Деталі: {e}')
+            logging.error(f"Помилка! Скрипт упав під час обробки Fact_Barn. Деталі: {e}")
 
         try:
             df_silo = pd.read_sql("SELECT * FROM raw.Fact_Silo", self.engine)
@@ -348,10 +348,10 @@ class Hay_Day_ETL_pipeline:
             df_silo = df_silo.merge(db_crops, on='CropName', how='inner')
 
             if len(df_silo) == 0 and initial_count > 0:
-                logging.warning('Попередження! Нова поставка Fact_Silo повністю анулювалася після мерджу! Дані в БД не додано.')
+                logging.warning("Попередження! Нова поставка Fact_Silo повністю анулювалася після мерджу! Дані в БД не додано.")
             else:
                 if len(df_silo) < initial_count:
-                    logging.warning(f'Зверни увагу: {initial_count - len(df_silo)} нових рядків фактів комори пропущено через невідповідність ключів.')
+                    logging.warning(f"Зверни увагу: {initial_count - len(df_silo)} нових рядків фактів комори пропущено через невідповідність ключів.")
 
                 df_final_silo = df_silo[[
                     'StorageID',
@@ -361,9 +361,9 @@ class Hay_Day_ETL_pipeline:
                 ]]
 
                 df_final_silo.to_sql('Fact_Silo', con=self.engine, if_exists='append',index=False)
-                logging.info('Успішно! Fact_Silo')
+                logging.info("Успішно! Fact_Silo")
         except Exception as e:
-            logging.error(f'Помилка! Скрипт упав під час обробки Fact_Silo. Деталі: {e}')
+            logging.error(f"Помилка! Скрипт упав під час обробки Fact_Silo. Деталі: {e}")
 
         try:
             df_buildings = pd.read_sql("SELECT * FROM raw.Fact_Buildings", self.engine)
@@ -383,10 +383,10 @@ class Hay_Day_ETL_pipeline:
             df_buildings = df_buildings.merge(db_buildings, on='BuildingName', how='inner')
 
             if len(df_buildings) == 0 and initial_count > 0:
-                logging.warning('Попередження! Нова поставка Fact_Barn повністю анулювалася після мерджу! Дані в БД не додано.')
+                logging.warning("Попередження! Нова поставка Fact_Barn повністю анулювалася після мерджу! Дані в БД не додано.")
             else:
                 if len(df_buildings) < initial_count:
-                    logging.warning(f'Зверни увагу: {initial_count - len(df_buildings)} нових рядків фактів комори пропущено через невідповідність ключів.')
+                    logging.warning(f"Зверни увагу: {initial_count - len(df_buildings)} нових рядків фактів комори пропущено через невідповідність ключів.")
 
                 df_final_buildings = df_buildings[[
                     'BuildingID',
@@ -397,7 +397,7 @@ class Hay_Day_ETL_pipeline:
                 ]]
 
                 df_final_buildings.to_sql('Fact_Buildings', con=self.engine, if_exists='append',index=False)
-                logging.info('Успішно! Fact_Buildings')
+                logging.info("Успішно! Fact_Buildings")
         except Exception as e:
-            logging.error(f'Помилка! Скрипт упав під час обробки Fact_Buildings. Деталі: {e}')
+            logging.error(f"Помилка! Скрипт упав під час обробки Fact_Buildings. Деталі: {e}")
 
