@@ -53,6 +53,15 @@ class Hay_Day_ETL_pipeline:
             df_farms['FarmExperience'] = df_farms['FarmExperience'].astype(int)
             df_farms['FarmCreatedAt'] = pd.to_datetime(df_farms['FarmCreatedAt'])
 
+            existing_names = []
+            try:
+                df_farms_existing = pd.read_sql("SELECT FarmName FROM Dim_Farms", self.engine)
+                existing_names = df_farms_existing['FarmName'].tolist()
+            except Exception as err:
+                logging.warning(f"Не вдалося зчитати існуючі ферми (можливо, таблиця ще порожня): {err}")
+
+            df_farms = df_farms[~df_farms['FarmName'].isin(existing_names)]
+
             df_farms.to_sql('Dim_Farms', con=self.engine, if_exists='append', index=False)
             logging.info("Dim_Farms завантажено успішно!")
         except Exception as e:
