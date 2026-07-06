@@ -297,7 +297,7 @@ class Hay_Day_ETL_pipeline:
                     'PetQuantity'
                 ]]
 
-                df_final_pets_livestock.to_sql('temp_clean_pet_livestock', con=self.engine, schema='raw', if_exists='append',index=False)
+                df_final_pets_livestock.to_sql('temp_clean_pet_livestock', con=self.engine, schema='raw', if_exists='replace',index=False)
                 logging.info("Успішно! temp_clean_pet_livestock")
 
                 with self.engine.begin() as connection:
@@ -335,7 +335,7 @@ class Hay_Day_ETL_pipeline:
                     'ProductCount'
                 ]]
 
-                df_final_barn.to_sql('temp_clean_barn', con=self.engine, schema='raw', if_exists='append',index=False)
+                df_final_barn.to_sql('temp_clean_barn', con=self.engine, schema='raw', if_exists='replace',index=False)
                 logging.info("Успішно! temp_clean_barn")
 
                 with self.engine.begin() as connection:
@@ -373,7 +373,7 @@ class Hay_Day_ETL_pipeline:
                     'CropCount'
                 ]]
 
-                df_final_silo.to_sql('temp_clean_silo', con=self.engine, schema='raw', if_exists='append',index=False)
+                df_final_silo.to_sql('temp_clean_silo', con=self.engine, schema='raw', if_exists='replace',index=False)
                 logging.info("Успішно! temp_clean_silo")
 
                 with self.engine.begin() as connection:
@@ -412,8 +412,7 @@ class Hay_Day_ETL_pipeline:
                     'ProductionSlots',
                     'MasteryStars'
                 ]]
-
-                df_final_buildings.to_sql('temp_clean_buildings', con=self.engine, if_exists='append',index=False)
+                df_final_buildings.to_sql('temp_clean_buildings', con=self.engine, schema='raw', if_exists='replace',index=False)
                 logging.info("Успішно! temp_clean_buildings")
 
                 with self.engine.begin() as connection:
