@@ -376,3 +376,11 @@ CREATE TABLE raw.temp_clean_silo(
     CropID INT,
     CropCount INT
 );
+
+CREATE TABLE raw.temp_clean_buildings(
+    BuildingID INT,
+	FarmID INT,
+    LocationID INT,
+    ProductionSlots INT,
+	MasteryStars INT
+);
