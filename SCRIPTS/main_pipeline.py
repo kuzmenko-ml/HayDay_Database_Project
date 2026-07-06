@@ -265,7 +265,7 @@ class Hay_Day_ETL_pipeline:
                 logging.info("Успішно! temp_clean_livestock")
 
                 with self.engine.begin() as connection:
-                    connection.execute("EXEC SP_SyncLievstockFacts")
+                    connection.execute("EXEC SP_SyncLivestockFacts")
                 logging.info("Успішно! Fact_Farm_Livestock синхронізовано через збережену процедуру.")
         except Exception as e:
             logging.error(f"Помилка! Скрипт упав під час обробки Fact_Farm_Livestock. Деталі: {e}")
