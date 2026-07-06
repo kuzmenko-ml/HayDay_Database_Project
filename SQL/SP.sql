@@ -403,3 +403,19 @@ BEGIN
         INSERT (FarmID, AnimalID, AnimalQuantity)
         VALUES (source.FarmID, source.AnimalID, source.AnimalQuantity);
 END;
+
+CREATE PROCEDURE SP_SyncBarnFacts
+AS
+BEGIN
+	SET NOCOUNT ON;
+	MERGE dbo.Fact_Barn AS target
+	USING raw.temp_clean_barn AS source
+	ON (target.FarmID = source.FarmID AND target.StorageID = source.StorageID AND target.ProductID = source.ProductID)
+
+    WHEN MATCHED THEN
+        UPDATE SET target.ProductCount = source.ProductCount
+        
+    WHEN NOT MATCHED THEN
+        INSERT (StorageID, FarmID, ProductID, ProductCount)
+        VALUES (source.StorageID, source.FarmID, source.ProductID, source.ProductCount);
+END;
