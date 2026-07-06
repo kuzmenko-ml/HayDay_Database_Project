@@ -362,3 +362,10 @@ CREATE TABLE raw.temp_clean_pet_livestock(
     PetID INT,
     PetQuantity INT
 );
+
+CREATE TABLE raw.temp_clean_barn(
+    StorageID INT,
+	FarmID INT,
+    ProductID INT,
+    ProductCount INT
+);
