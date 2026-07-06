@@ -412,8 +412,12 @@ class Hay_Day_ETL_pipeline:
                     'MasteryStars'
                 ]]
 
-                df_final_buildings.to_sql('Fact_Buildings', con=self.engine, if_exists='append',index=False)
-                logging.info("Успішно! Fact_Buildings")
+                df_final_buildings.to_sql('temp_clean_buildings', con=self.engine, if_exists='append',index=False)
+                logging.info("Успішно! temp_clean_buildings")
+
+                with self.engine.begin() as connection:
+                    connection.execute("EXEC SP_SyncBuildingFacts")
+                logging.info("Успішно! Fact_Buildings синхронізовано через збережену процедуру.")
         except Exception as e:
             logging.error(f"Помилка! Скрипт упав під час обробки Fact_Buildings. Деталі: {e}")
 
