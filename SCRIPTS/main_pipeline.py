@@ -74,6 +74,15 @@ class Hay_Day_ETL_pipeline:
             df_storage_type = self.delete_null_data(df_storage_type)
             df_storage_type = self.clean_text(df_storage_type, ['StorageTypeName'])
 
+            existing_names = []
+            try:
+                df_storage_type_existing = pd.read_sql("SELECT StorageTypeName FROM Dim_Storage_Type", self.engine)
+                existing_names = df_storage_type_existing['StorageTypeName'].tolist()
+            except Exception as err:
+                logging.warning(f"Не вдалося зчитати існуючі типи (можливо, таблиця ще порожня): {err}")
+
+            df_storage_type = df_storage_type[~df_storage_type['StorageTypeName'].isin(existing_names)]
+
             df_storage_type.to_sql('Dim_Storage_Type', con=self.engine, if_exists='append', index=False)
             logging.info("Dim_Storage_Type завантажено успішно!")
         except Exception as e:
