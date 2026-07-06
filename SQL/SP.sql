@@ -353,3 +353,19 @@ BEGIN
     END CATCH
 END;
 GO
+
+CREATE PROCEDURE SP_SyncLievstockFacts
+AS
+BEGIN
+	SET NOCOUNT ON;
+	MERGE dbo.Fact_Farm_Livestock AS target
+	USING raw.temp_clean_livestock AS source
+	ON (target.FarmID = source.FarmID AND target.AnimalID = source.AnimalID)
+
+    WHEN MATCHED THEN
+        UPDATE SET target.AnimalQuantity = source.AnimalQuantity
+        
+    WHEN NOT MATCHED THEN
+        INSERT (FarmID, AnimalID, AnimalQuantity)
+        VALUES (source.FarmID, source.AnimalID, source.AnimalQuantity);
+END;
