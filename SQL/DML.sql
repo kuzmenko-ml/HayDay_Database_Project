@@ -369,3 +369,10 @@ CREATE TABLE raw.temp_clean_barn(
     ProductID INT,
     ProductCount INT
 );
+
+CREATE TABLE raw.temp_clean_silo(
+    StorageID INT,
+	FarmID INT,
+    CropID INT,
+    CropCount INT
+);
