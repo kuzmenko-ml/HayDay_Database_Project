@@ -1,6 +1,7 @@
 import logging
 import pandas as pd
 from sqlalchemy import create_engine
+from sqlalchemy import text
 
 class Hay_Day_ETL_pipeline:
     def __init__(self, server=None, database=None):
@@ -265,7 +266,7 @@ class Hay_Day_ETL_pipeline:
                 logging.info("Успішно! temp_clean_livestock")
 
                 with self.engine.begin() as connection:
-                    connection.execute("EXEC SP_SyncLivestockFacts")
+                    connection.execute(text("EXEC SP_SyncLivestockFacts"))
                 logging.info("Успішно! Fact_Farm_Livestock синхронізовано через збережену процедуру.")
         except Exception as e:
             logging.error(f"Помилка! Скрипт упав під час обробки Fact_Farm_Livestock. Деталі: {e}")
@@ -300,7 +301,7 @@ class Hay_Day_ETL_pipeline:
                 logging.info("Успішно! temp_clean_pet_livestock")
 
                 with self.engine.begin() as connection:
-                    connection.execute("EXEC SP_SyncPetsLivestockFacts")
+                    connection.execute(text("EXEC SP_SyncPetsLivestockFacts"))
                 logging.info("Успішно! Fact_Pets_Livestock синхронізовано через збережену процедуру.")
         except Exception as e:
             logging.error(f"Помилка! Скрипт упав під час обробки Fact_Pets_Livestock. Деталі: {e}")
@@ -338,7 +339,7 @@ class Hay_Day_ETL_pipeline:
                 logging.info("Успішно! temp_clean_barn")
 
                 with self.engine.begin() as connection:
-                    connection.execute("EXEC SP_SyncBarnFacts")
+                    connection.execute(text("EXEC SP_SyncBarnFacts"))
                 logging.info("Успішно! Fact_Barn синхронізовано через збережену процедуру.")
         except Exception as e:
             logging.error(f"Помилка! Скрипт упав під час обробки Fact_Barn. Деталі: {e}")
@@ -376,7 +377,7 @@ class Hay_Day_ETL_pipeline:
                 logging.info("Успішно! temp_clean_silo")
 
                 with self.engine.begin() as connection:
-                    connection.execute("EXEC SP_SyncSiloFacts")
+                    connection.execute(text("EXEC SP_SyncSiloFacts"))
                 logging.info("Успішно! Fact_Silo синхронізовано через збережену процедуру.")
         except Exception as e:
             logging.error(f"Помилка! Скрипт упав під час обробки Fact_Silo. Деталі: {e}")
@@ -416,7 +417,7 @@ class Hay_Day_ETL_pipeline:
                 logging.info("Успішно! temp_clean_buildings")
 
                 with self.engine.begin() as connection:
-                    connection.execute("EXEC SP_SyncBuildingFacts")
+                    connection.execute(text("EXEC SP_SyncBuildingFacts"))
                 logging.info("Успішно! Fact_Buildings синхронізовано через збережену процедуру.")
         except Exception as e:
             logging.error(f"Помилка! Скрипт упав під час обробки Fact_Buildings. Деталі: {e}")
