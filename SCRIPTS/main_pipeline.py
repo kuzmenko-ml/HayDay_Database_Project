@@ -399,7 +399,7 @@ class Hay_Day_ETL_pipeline:
             df_buildings = df_buildings.merge(db_buildings, on='BuildingName', how='inner')
 
             if len(df_buildings) == 0 and initial_count > 0:
-                logging.warning("Попередження! Нова поставка Fact_Barn повністю анулювалася після мерджу! Дані в БД не додано.")
+                logging.warning("Попередження! Нова поставка Fact_Buildings повністю анулювалася після мерджу! Дані в БД не додано.")
             else:
                 if len(df_buildings) < initial_count:
                     logging.warning(f"Зверни увагу: {initial_count - len(df_buildings)} нових рядків фактів комори пропущено через невідповідність ключів.")
