@@ -350,3 +350,9 @@ DELETE FROM Dim_Fishing_Spots;
 DELETE FROM Dim_Storage_Type;
 DELETE FROM Dim_Location;
 DELETE FROM Dim_Farms;
+
+CREATE TABLE raw.temp_clean_livestock (
+    FarmID INT,
+    AnimalID INT,
+    AnimalQuantity INT
+);
