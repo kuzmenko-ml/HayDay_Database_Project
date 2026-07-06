@@ -372,8 +372,12 @@ class Hay_Day_ETL_pipeline:
                     'CropCount'
                 ]]
 
-                df_final_silo.to_sql('Fact_Silo', con=self.engine, if_exists='append',index=False)
-                logging.info("Успішно! Fact_Silo")
+                df_final_silo.to_sql('temp_clean_silo', con=self.engine, schema='raw', if_exists='append',index=False)
+                logging.info("Успішно! temp_clean_silo")
+
+                with self.engine.begin() as connection:
+                    connection.execute("EXEC SP_SyncSiloFacts")
+                logging.info("Успішно! Fact_Silo синхронізовано через збережену процедуру.")
         except Exception as e:
             logging.error(f"Помилка! Скрипт упав під час обробки Fact_Silo. Деталі: {e}")
 
