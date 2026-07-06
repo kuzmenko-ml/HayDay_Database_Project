@@ -419,3 +419,23 @@ BEGIN
         INSERT (StorageID, FarmID, ProductID, ProductCount)
         VALUES (source.StorageID, source.FarmID, source.ProductID, source.ProductCount);
 END;
+
+CREATE PROCEDURE SP_SyncSiloFacts
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	MERGE dbo.Fact_Silo AS target
+	USING raw.temp_clean_silo as source
+
+	ON (target.FarmID = source.FarmID 
+	    AND target.StorageID = source.StorageID 
+	    AND target.CropID = source.CropID)
+	
+	WHEN MATCHED THEN
+        UPDATE SET target.CropCount = source.CropCount
+
+	WHEN NOT MATCHED THEN
+        INSERT (StorageID, FarmID, CropID, CropCount)
+        VALUES (source.StorageID, source.FarmID, source.CropID, source.CropCount);
+END;
