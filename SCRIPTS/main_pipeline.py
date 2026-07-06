@@ -261,8 +261,12 @@ class Hay_Day_ETL_pipeline:
                     'AnimalQuantity'
                 ]]
 
-                df_final_farm_livestock.to_sql('Fact_Farm_Livestock', con=self.engine, if_exists='append', index=False)
-                logging.info("Успішно! Fact_Farm_Livestock")
+                df_final_farm_livestock.to_sql('temp_clean_livestock', con=self.engine, schema='raw', if_exists='replace', index=False)
+                logging.info("Успішно! temp_clean_livestock")
+
+                with self.engine.begin() as connection:
+                    connection.execute("EXEC SP_SyncLievstockFacts")
+                logging.info("Успішно! Fact_Farm_Livestock синхронізовано через збережену процедуру.")
         except Exception as e:
             logging.error(f"Помилка! Скрипт упав під час обробки Fact_Farm_Livestock. Деталі: {e}")
 
