@@ -439,3 +439,26 @@ BEGIN
         INSERT (StorageID, FarmID, CropID, CropCount)
         VALUES (source.StorageID, source.FarmID, source.CropID, source.CropCount);
 END;
+
+CREATE PROCEDURE SP_SyncBuildingFacts
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	MERGE dbo.Fact_Buildings AS target
+	USING raw.temp_clean_buildings as source
+
+	ON (target.FarmID = source.FarmID 
+	    AND target.BuildingID = source.BuildingID 
+	    AND target.FarmID = source.FarmID)
+	
+	WHEN MATCHED THEN
+        UPDATE SET 
+			target.LocationID = source.LocationID,
+            target.ProductionSlots = source.ProductionSlots,
+            target.MasteryStars = source.MasteryStars
+
+	WHEN NOT MATCHED THEN
+        INSERT (BuildingID, FarmID, LocationID, ProductionSlots, MasteryStars)
+        VALUES (source.BuildingID, source.FarmID, source.LocationID, source.ProductionSlots, source.MasteryStars);
+END;
