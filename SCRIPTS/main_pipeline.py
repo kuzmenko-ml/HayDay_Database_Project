@@ -334,8 +334,12 @@ class Hay_Day_ETL_pipeline:
                     'ProductCount'
                 ]]
 
-                df_final_barn.to_sql('Fact_Barn', con=self.engine, if_exists='append',index=False)
-                logging.info("Успішно! Fact_Barn")
+                df_final_barn.to_sql('temp_clean_barn', con=self.engine, schema='raw', if_exists='append',index=False)
+                logging.info("Успішно! temp_clean_barn")
+
+                with self.engine.begin() as connection:
+                    connection.execute("EXEC SP_SyncBarnFacts")
+                logging.info("Успішно! Fact_Barn синхронізовано через збережену процедуру.")
         except Exception as e:
             logging.error(f"Помилка! Скрипт упав під час обробки Fact_Barn. Деталі: {e}")
 
