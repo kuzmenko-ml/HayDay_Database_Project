@@ -229,6 +229,15 @@ class Hay_Day_ETL_pipeline:
                     'AnimalRequiredLevel'
                 ]]
 
+                existing_names = []
+                try:
+                    df_animal_existing = pd.read_sql("SELECT AnimalName FROM Dim_Animals", self.engine)
+                    existing_names = df_animal_existing['AnimalName'].tolist()
+                except Exception as err:
+                    logging.warning(f"Не вдалося зчитати існуючі тварини (можливо, таблиця ще порожня): {err}")
+
+                df_final_animals = df_final_animals[~df_final_animals['AnimalName'].isin(existing_names)]
+
                 df_final_animals.to_sql('Dim_Animals', con=self.engine, if_exists='append', index=False)
                 logging.info("Dim_Animals завантажено успішно!")
             except Exception as e:
