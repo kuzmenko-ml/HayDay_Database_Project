@@ -255,6 +255,15 @@ class Hay_Day_ETL_pipeline:
             df_crops['CropTimeMinutes'] = df_crops['CropTimeMinutes'].astype(int)
             df_crops['CropMaxPrice'] = df_crops['CropMaxPrice'].astype(int)
 
+            existing_names = []
+            try:
+                df_crop_existing = pd.read_sql("SELECT CropName FROM Dim_Crops", self.engine)
+                existing_names = df_crop_existing['CropName'].tolist()
+            except Exception as err:
+                logging.warning(f"Не вдалося зчитати існуючі культури (можливо, таблиця ще порожня): {err}")
+
+            df_crops = df_crops[~df_crops['CropName'].isin(existing_names)]
+
             df_crops.to_sql('Dim_Crops', con=self.engine, if_exists='append', index=False)
             logging.info("Dim_Crops завантажено успішно!")
         except Exception as e:
