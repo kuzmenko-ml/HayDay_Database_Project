@@ -153,6 +153,15 @@ class Hay_Day_ETL_pipeline:
                 'ConstructionTimeMinutes'
             ]]
 
+            existing_names = []
+            try:
+                df_buildings_existing = pd.read_sql("SELECT BuildingName FROM Dim_Buildings", self.engine)
+                existing_names = df_buildings_existing['BuildingName'].tolist()
+            except Exception as err:
+                logging.warning(f"Не вдалося зчитати існуючі будівлі (можливо, таблиця ще порожня): {err}")
+
+            df_final_buildings = df_final_buildings[~df_final_buildings['BuildingName'].isin(existing_names)]
+
             df_final_buildings.to_sql('Dim_Buildings', con=self.engine, if_exists='append', index=False)
             logging.info("Dim_Buildings завантажено успішно!")
         except Exception as e:
