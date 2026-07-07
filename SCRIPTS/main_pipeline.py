@@ -2,6 +2,7 @@ import logging
 import pandas as pd
 from sqlalchemy import create_engine
 from sqlalchemy import text
+import json
 
 class Hay_Day_ETL_pipeline:
     def __init__(self, server=None, database=None):
@@ -492,4 +493,28 @@ class Hay_Day_ETL_pipeline:
                 logging.info("Успішно! Fact_Buildings синхронізовано через збережену процедуру.")
         except Exception as e:
             logging.error(f"Помилка! Скрипт упав під час обробки Fact_Buildings. Деталі: {e}")
+
+    def load_new_demensions_config(self):
+        with open("D:/HayDay_Database_Project/SCRIPTS/pipeline_config.json", 'r') as c:
+            config = json.load(c)
+
+        dim = config["new_dimensions"]
+
+        for i in dim:
+            table_name = i["table_name"]
+            file_path = i["source_file_path"]
+            colums_to_clean = i["clean_text_columns"]
+            int_columns = i["int_columns"]
+            business_keys = i["business_keys"]
+
+            temp_df = pd.read_csv(file_path)
+
+            temp_df = self.delete_null_data(temp_df)
+
+            if colums_to_clean:
+                temp_df = self.clean_text(temp_df, colums_to_clean)
+
+            if int_columns:
+                for col in int_columns:
+                    temp_df[col] = temp_df[col].astype(int)
 
