@@ -449,8 +449,7 @@ BEGIN
 	USING raw.temp_clean_buildings as source
 
 	ON (target.FarmID = source.FarmID 
-	    AND target.BuildingID = source.BuildingID 
-	    AND target.FarmID = source.FarmID)
+	    AND target.BuildingID = source.BuildingID)
 	
 	WHEN MATCHED THEN
         UPDATE SET 
