@@ -461,3 +461,23 @@ BEGIN
         INSERT (BuildingID, FarmID, LocationID, ProductionSlots, MasteryStars)
         VALUES (source.BuildingID, source.FarmID, source.LocationID, source.ProductionSlots, source.MasteryStars);
 END;
+
+CREATE PROCEDURE SP_SyncTreeBushFacts
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	MERGE dbo.Fact_Tree_Bush AS target
+	USING raw.temp_clean_tree_bush as source
+
+	ON (target.FarmID = source.FarmID 
+	    AND target.TreeOrBushID = source.TreeOrBushID)
+	
+	WHEN MATCHED THEN
+        UPDATE SET 
+			target.TreeOrBushCount = source.TreeOrBushCount
+
+	WHEN NOT MATCHED THEN
+        INSERT (FarmID, TreeOrBushID, TreeOrBushCount)
+        VALUES (source.FarmID, source.TreeOrBushID, source.TreeOrBushCount);
+END;
