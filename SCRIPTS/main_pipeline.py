@@ -112,6 +112,15 @@ class Hay_Day_ETL_pipeline:
                     'StorageCapacity'
                 ]]
 
+                existing_names = []
+                try:
+                    df_storages_existing = pd.read_sql("SELECT FarmID, StorageTypeID FROM Dim_Storages", self.engine)
+                    existing_names = list(zip(df_storages_existing['FarmID'], df_storages_existing['StorageTypeID']))
+                except Exception as err:
+                    logging.warning(f"Не вдалося зчитати існуючі сховища (можливо, таблиця ще порожня): {err}")
+
+                df_final_storages = df_final_storages[~df_final_storages.set_index(['FarmID', 'StorageTypeID']).index.isin(existing_names)]
+
                 df_final_storages.to_sql('Dim_Storages', con=self.engine, if_exists='append', index=False)
                 logging.info("Dim_Storages завантажено успішно!")
             except Exception as e:
