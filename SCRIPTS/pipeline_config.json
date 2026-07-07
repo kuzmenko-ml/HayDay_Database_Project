@@ -1,0 +1,19 @@
+{
+  "new_dimensions": [
+    {
+      "table_name": "Dim_Tree_Bush",
+      "source_file_path": "D:/HayDay_Database_Project/DATA/tree_bush.csv",
+      "clean_text_columns": ["TreeOrBushName"],
+      "int_columns": ["TreeOrBushRequiredLevel"],
+      "business_keys": ["TreeOrBushName"]
+    }
+  ],
+  "new_facts": [
+    {
+      "table_name": "Fact_Tree_Bush",
+      "source_file_path": "D:/HayDay_Database_Project/DATA/fact_tree_bush.csv",
+      "temp_table_name": "raw.temp_clean_tree_bush",
+      "procedure_name": "SP_SyncTreeBushFacts"
+    }
+  ]
+}
