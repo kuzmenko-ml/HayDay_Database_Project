@@ -192,6 +192,15 @@ class Hay_Day_ETL_pipeline:
                     'BuildingID'
                 ]]
 
+                existing_names = []
+                try:
+                    df_product_existing = pd.read_sql("SELECT ProductName FROM Dim_Products", self.engine)
+                    existing_names = df_product_existing['ProductName'].tolist()
+                except Exception as err:
+                    logging.warning(f"Не вдалося зчитати існуючі продукти (можливо, таблиця ще порожня): {err}")
+
+                df_final_products = df_final_products[~df_final_products['ProductName'].isin(existing_names)]
+
                 df_final_products.to_sql('Dim_Products', con=self.engine, if_exists='append',index=False)
                 logging.info("Dim_Products завантажено успішно!")
             except Exception as e:
