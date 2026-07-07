@@ -518,3 +518,15 @@ class Hay_Day_ETL_pipeline:
                 for col in int_columns:
                     temp_df[col] = temp_df[col].astype(int)
 
+            existing_names = []
+            business_keys_str = ", ".join(business_keys)
+            try:
+                db_df = pd.read_sql(f"SELECT {business_keys_str} FROM {table_name}", self.engine)
+                existing_names = db_df[business_keys[0]].tolist()
+            except Exception as err:
+                logging.warning(f"Не вдалося зчитати існуючі дані (можливо, таблиця ще порожня): {err}")
+
+            temp_df = temp_df[~temp_df[business_keys[0]].isin(existing_names)]
+            temp_df.to_sql(table_name, con=self.engine, if_exists='append', index=False)
+            logging.info("Успіх! Нова таблиця оброблена та збережена у БД.")
+
