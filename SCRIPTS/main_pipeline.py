@@ -530,3 +530,26 @@ class Hay_Day_ETL_pipeline:
             temp_df.to_sql(table_name, con=self.engine, if_exists='append', index=False)
             logging.info("Успіх! Нова таблиця оброблена та збережена у БД.")
 
+    def load_new_facts_config(self):
+        with open("D:/HayDay_Database_Project/SCRIPTS/pipeline_config.json", 'r') as c:
+            config = json.load(c)
+
+        facts = config["new_facts"]
+
+        for i in facts:
+            table_name = i["table_name"]
+            path = i["source_file_path"]
+            temp_table_name = i["temp_table_name"] 
+            sp = i["procedure_name"]
+
+            df = pd.read_csv(path)
+
+            df = self.delete_null_data(df)
+
+            df.to_sql(temp_table_name, con=self.engine, if_exists='replace',index=False)
+
+            try:
+                with self.engine.connect() as con:
+                    con.execute(f"EXEC {sp}")
+            except Exception as er:
+                logging.error(f"Помилка при виконанні процедури {sp}: {er}")
