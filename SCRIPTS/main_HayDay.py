@@ -35,6 +35,8 @@ if __name__ == "__main__":
         pipeline.transform_base_dimensions()
         pipeline.transform_game_entities()
         pipeline.transform_farm_facts()
+        pipeline.load_new_demensions_config()
+        pipeline.load_new_facts_config()
 
         logging.info("Увесь ETL-конвеєр виконано без помилок! Перевіряй таблиці.")
         
