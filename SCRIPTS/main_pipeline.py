@@ -558,16 +558,36 @@ class Hay_Day_ETL_pipeline:
             path = i["source_file_path"]
             temp_table_name = i["temp_table_name"] 
             sp = i["procedure_name"]
+            lookups = i.get("lookups", [])
 
             df = pd.read_csv(path)
 
             df = self.delete_null_data(df)
 
-            df.to_sql(temp_table_name, con=self.engine, if_exists='replace',index=False)
+            if lookups:
+                logging.info(f"Старт збагачення даних ключами для таблиці {table_name}")
+                for lookup in lookups:
+                    src_col = lookup["source_col"]       
+                    id_col = lookup["target_id_col"]     
+                    dim_table = lookup["dim_table"]      
+
+                    try:
+
+                        dim_df = pd.read_sql(f"SELECT {id_col}, {src_col} FROM {dim_table}", self.engine)
+                        
+                        df = df.merge(dim_df, on=src_col, how='left')
+
+                        df = df.drop(columns=[src_col])
+                        
+                        logging.info(f"Успішно підтягнуто {id_col} замість {src_col}")
+                    except Exception as lookup_err:
+                        logging.error(f"Помилка пошуку ID у таблиці {dim_table}: {lookup_err}")
+
+            df.to_sql(temp_table_name, con=self.engine, schema='raw', if_exists='replace', index=False)
 
             try:
                 with self.engine.connect() as con:
-                    con.execute(f"EXEC {sp}")
+                    con.execute(text(f"EXEC {sp}"))
                     con.commit()
                     logging.info(f"Таблицю фактів {table_name} успішно оновлено!")
             except Exception as er:
