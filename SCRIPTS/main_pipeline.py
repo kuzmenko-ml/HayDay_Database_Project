@@ -507,7 +507,12 @@ class Hay_Day_ETL_pipeline:
             int_columns = i["int_columns"]
             business_keys = i["business_keys"]
 
-            temp_df = pd.read_csv(file_path)
+            try:
+                temp_df = pd.read_csv(file_path)
+                logging.info(f"Файл успішно прочитано. Знайдено рядків: {len(temp_df)}")
+            except Exception as e:
+                logging.error(f"Критична помилка при читанні файлу {file_path}: {e}")
+                continue
 
             temp_df = self.delete_null_data(temp_df)
 
@@ -516,7 +521,10 @@ class Hay_Day_ETL_pipeline:
 
             if int_columns:
                 for col in int_columns:
-                    temp_df[col] = temp_df[col].astype(int)
+                    try:
+                        temp_df[col] = temp_df[col].astype(int)
+                    except Exception as int_err:
+                        logging.error(f"Помилка конвертації колонки {col} в INT: {int_err}")
 
             existing_names = []
             business_keys_str = ", ".join(business_keys)
@@ -527,8 +535,17 @@ class Hay_Day_ETL_pipeline:
                 logging.warning(f"Не вдалося зчитати існуючі дані (можливо, таблиця ще порожня): {err}")
 
             temp_df = temp_df[~temp_df[business_keys[0]].isin(existing_names)]
-            temp_df.to_sql(table_name, con=self.engine, if_exists='append', index=False)
-            logging.info("Успіх! Нова таблиця оброблена та збережена у БД.")
+            after_filter = len(temp_df)
+
+            if after_filter > 0:
+                try:
+                    logging.info(f"Запис {after_filter} нових рядків у таблицю {table_name}...")
+                    temp_df.to_sql(table_name, con=self.engine, if_exists='append', index=False)
+                    logging.info(f"Успіх! Довідник {table_name} оновлено.")
+                except Exception as sql_err:
+                    logging.error(f"Помилка запису в БД для {table_name}: {sql_err}")
+        else:
+            logging.info("Завершено завантаження довідників.")
 
     def load_new_facts_config(self):
         with open("D:/HayDay_Database_Project/SCRIPTS/pipeline_config.json", 'r') as c:
@@ -551,5 +568,7 @@ class Hay_Day_ETL_pipeline:
             try:
                 with self.engine.connect() as con:
                     con.execute(f"EXEC {sp}")
+                    con.commit()
+                    logging.info(f"Таблицю фактів {table_name} успішно оновлено!")
             except Exception as er:
                 logging.error(f"Помилка при виконанні процедури {sp}: {er}")
