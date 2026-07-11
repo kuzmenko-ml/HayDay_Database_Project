@@ -11,3 +11,5 @@ CREATE TABLE Dim_Farms(
 	FarmLevel INT NOT NULL DEFAULT 1,
 	FarmExperience INT NOT NULL,
 	FarmCreatedAt DATETIME);
+
+	EXEC sp_rename 'dbo.Dim_Farms.FarmId', 'FarmID', 'COLUMN';
