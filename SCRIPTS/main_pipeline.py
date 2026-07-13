@@ -190,7 +190,16 @@ class Hay_Day_ETL_pipeline:
                 df_products['ProductExperience'] = df_products['ProductExperience'].astype(int)
                 df_products['ProductTimeMinutes'] = df_products['ProductTimeMinutes'].astype(int)
 
+                rows_before = len(df_products)
+
                 df_products = df_products.merge(db_buildings, on='BuildingName', how='inner')
+
+                rows_after = len(df_products)
+                if rows_after == 0:
+                    raise ValueError("Після з'єднання з будівлями залишилось 0 продуктів.")
+                    
+                if rows_after < rows_before:
+                    logging.warning(f"Увага! Загублено {rows_before - rows_after} продуктів через те, що їхні будівлі не знайдені в Dim_Buildings.")
 
                 df_final_products = df_products[[
                     'ProductName',
