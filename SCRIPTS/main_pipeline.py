@@ -238,7 +238,16 @@ class Hay_Day_ETL_pipeline:
                 df_animals['ProductionTimeMinutes'] = df_animals['ProductionTimeMinutes'].astype(int)
                 df_animals['AnimalRequiredLevel'] = df_animals['AnimalRequiredLevel'].astype(int)
 
+                rows_before = len(df_animals)
+
                 df_animals = df_animals.merge(db_products, on='ProductName', how='inner')
+
+                rows_after = len(df_animals)
+                if rows_after == 0:
+                    raise ValueError("Після з'єднання з продуктами залишилось 0 тварин.")
+                    
+                if rows_after < rows_before:
+                    logging.warning(f"Увага! Загублено {rows_before - rows_after} тварин через те, що їхні продукти не знайдені в Dim_Products.")
 
                 df_final_animals = df_animals[[
                     'AnimalName',
