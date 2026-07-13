@@ -542,6 +542,7 @@ class Hay_Day_ETL_pipeline:
             colums_to_clean = i["clean_text_columns"]
             int_columns = i["int_columns"]
             business_keys = i["business_keys"]
+            lookups = i.get("lookups", None)
 
             try:
                 temp_df = pd.read_csv(file_path)
@@ -554,6 +555,30 @@ class Hay_Day_ETL_pipeline:
 
             if colums_to_clean:
                 temp_df = self.clean_text(temp_df, colums_to_clean)
+
+            if lookups:
+                for lookup in lookups:
+                    src_col = lookup["source_col"]
+                    lk_table = lookup["lookup_table"]
+                    lk_key = lookup["lookup_key"]
+                    id_col = lookup["id_col"]
+
+                    if src_col in temp_df.columns:
+                        try:
+                            db_lookup_df = pd.read_sql(f"SELECT {lk_key}, {id_col} FROM {lk_table}", self.engine)
+                            
+                            db_lookup_df = self.clean_text(db_lookup_df, [lk_key])
+
+                            temp_df = temp_df.merge(db_lookup_df, left_on=src_col, right_on=lk_key, how='inner')
+                            
+                            cols_to_drop = [src_col]
+                            if lk_key != src_col:
+                                cols_to_drop.append(lk_key)
+                                
+                            temp_df = temp_df.drop(columns=cols_to_drop)
+                            logging.info(f"Успішно змаплено {src_col} -> {id_col} через таблицю {lk_table}")
+                        except Exception as lookup_err:
+                            logging.error(f"Помилка динамічного маппінгу для {src_col} у таблиці {table_name}: {lookup_err}")
 
             if int_columns:
                 for col in int_columns:
