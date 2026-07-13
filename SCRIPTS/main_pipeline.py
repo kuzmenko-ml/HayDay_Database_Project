@@ -139,7 +139,15 @@ class Hay_Day_ETL_pipeline:
 
             df_buildings = self.clean_text(df_buildings, ['LocationName', 'BuildingName'])
 
+            rows_before = len(df_buildings)
+
             df_buildings = df_buildings.merge(db_location, on='LocationName', how='inner')
+
+            rows_after = len(df_buildings)
+            if rows_after == 0:
+                raise ValueError("Після з'єднання з локаціями залишилось 0 будівель.")
+            if rows_after < rows_before:
+                logging.warning(f"Увага! Загублено {rows_before - rows_after} будівель через те, що їхні локації не знайдені в Dim_Location.")
 
             df_buildings['BuildingRequiredLevel'] = df_buildings['BuildingRequiredLevel'].astype(int)
             df_buildings['LocationID'] = df_buildings['LocationID'].astype(int)
