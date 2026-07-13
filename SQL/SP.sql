@@ -481,3 +481,28 @@ BEGIN
         INSERT (FarmID, TreeOrBushID, TreeOrBushCount)
         VALUES (source.FarmID, source.TreeOrBushID, source.TreeOrBushCount);
 END;
+
+CREATE PROCEDURE SP_SyncTownBuildingsFacts
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	MERGE dbo.Fact_Town_Buildings AS target
+	USING raw.temp_clean_town_buildings as source
+
+	ON (target.FarmID = source.FarmID 
+	    AND target.TownBuildingID = source.TownBuildingID)
+	
+	WHEN MATCHED THEN
+        UPDATE SET 
+			target.TownBuildingSlotQuantity = source.TownBuildingSlotQuantity,
+			target.TownBuildingMoneyLevel = source.TownBuildingMoneyLevel,
+			target.TownBuildingXPLevel = source.TownBuildingXPLevel,
+			target.TownBuildingTimeLevel = source.TownBuildingTimeLevel
+
+	WHEN NOT MATCHED THEN
+        INSERT (FarmID,LocationID, TownBuildingID, TownBuildingSlotQuantity,
+		TownBuildingMoneyLevel,TownBuildingXPLevel,TownBuildingTimeLevel)
+        VALUES (source.FarmID, source.LocationID, source.TownBuildingID,source.TownBuildingSlotQuantity,
+		source.TownBuildingMoneyLevel,source.TownBuildingXPLevel,source.TownBuildingTimeLevel);
+END;
