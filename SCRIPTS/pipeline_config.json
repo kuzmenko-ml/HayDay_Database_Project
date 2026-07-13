@@ -6,14 +6,59 @@
       "clean_text_columns": ["TreeOrBushName"],
       "int_columns": ["TreeOrBushRequiredLevel"],
       "business_keys": ["TreeOrBushName"]
+    },
+    {
+      "table_name": "Dim_Town_Buildings",
+      "source_file_path": "D:/HayDay_Database_Project/DATA/town_buildings.csv",
+      "clean_text_columns": ["TownBuildingName", "LocationName"],
+      "int_columns": ["TownBuildingRequiredReputation"],
+      "business_keys": ["TownBuildingName"],
+      "lookups": [
+        {
+          "source_col": "LocationName",
+          "lookup_table": "Dim_Location",
+          "lookup_key": "LocationName",
+          "id_col": "LocationID"
+        }
+      ]
     }
   ],
   "new_facts": [
     {
       "table_name": "Fact_Tree_Bush",
       "source_file_path": "D:/HayDay_Database_Project/DATA/fact_tree_bush.csv",
-      "temp_table_name": "raw.temp_clean_tree_bush",
-      "procedure_name": "SP_SyncTreeBushFacts"
+      "temp_table_name": "temp_clean_tree_bush",
+      "procedure_name": "SP_SyncTreeBushFacts",
+      "lookups": [
+        {
+          "source_col": "FarmName",
+          "target_id_col": "FarmID",
+          "dim_table": "Dim_Farms"
+        },
+        {
+          "source_col": "TreeOrBushName",
+          "target_id_col": "TreeOrBushID",
+          "dim_table": "Dim_Tree_Bush"
+        }
+      ]
+    },
+    {
+      "table_name": "Fact_Town_Buildings",
+      "source_file_path": "D:/HayDay_Database_Project/DATA/fact_town.csv",
+      "temp_table_name": "temp_clean_town_buildings",
+      "procedure_name": "SP_SyncTownBuildingsFacts",
+      "lookups": [
+        {
+          "source_col": "FarmName",
+          "target_id_col": "FarmID",
+          "dim_table": "Dim_Farms"
+        },
+        {
+          "source_col": "TownBuildingName",
+          "target_id_col": "TownBuildingID",
+          "dim_table": "Dim_Town_Buildings"
+        }
+      ]
     }
   ]
 }
