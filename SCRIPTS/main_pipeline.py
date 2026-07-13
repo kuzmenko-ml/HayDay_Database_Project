@@ -304,12 +304,22 @@ class Hay_Day_ETL_pipeline:
                 db_crops = pd.read_sql("SELECT CropName, CropID FROM Dim_Crops", self.engine)
 
                 df_pets = self.delete_null_data(df_pets, columns=['PetName', 'PetRequiredLevel'])
-                df_pets = self.delete_null_data(df_pets, columns=['ProductName', 'CropName'], how='all')
                 df_pets = self.clean_text(df_pets, ['PetName'])
                 df_pets['PetRequiredLevel'] = df_pets['PetRequiredLevel'].astype(int)
 
+                rows_before = len(df_pets)
+
                 df_pets = df_pets.merge(db_products, on='ProductName', how='left')
                 df_pets = df_pets.merge(db_crops, on='CropName', how='left')
+
+                df_pets = df_pets.dropna(subset=['ProductID', 'CropID'], how='all')
+                rows_after = len(df_pets)
+
+                if rows_after == 0:
+                    raise ValueError("Помилка! Після з'єднання з довідниками улюбленців не залишилось.")
+
+                if rows_after < rows_before:
+                    logging.warning(f"Увага! Загублено {rows_before - rows_after} улюбленців, бо їхній корм не знайдено в Dim_Products або Dim_Crops.")
 
                 df_final_pets = df_pets[[
                     'PetName',
