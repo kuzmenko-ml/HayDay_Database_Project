@@ -633,8 +633,9 @@ class Hay_Day_ETL_pipeline:
                     dim_table = lookup["dim_table"]      
 
                     try:
-
+                        df = self.clean_text(df, [src_col])
                         dim_df = pd.read_sql(f"SELECT {id_col}, {src_col} FROM {dim_table}", self.engine)
+                        dim_df = self.clean_text(dim_df, [src_col])
                         
                         df = df.merge(dim_df, on=src_col, how='left')
 
