@@ -1,4 +1,5 @@
 import os
+import sys
 import logging
 from raw_etl_pipeline import load_raw_data
 from main_pipeline import Hay_Day_ETL_pipeline
@@ -19,8 +20,10 @@ logging.basicConfig(
 if __name__ == "__main__":
     server = os.environ.get("DB_SERVER", ".")
     database = os.environ.get("DB_DATABASE", "HayDay_Farm")
+
+    mode = sys.argv[1].lower() if len(sys.argv) > 1 else "all"
     try:
-        logging.info("--- СТАРТ ФАЗИ 1: Завантаження сирих даних ---")
+        logging.info(f"--- СТАРТ ФАЗИ 1: Завантаження сирих даних [Режим: {mode.upper()}] ---")
 
         connection_string = f"mssql+pyodbc://@{server}/{database}?driver=ODBC+Driver+17+for+SQL+Server&trusted_connection=yes"
         engine = create_engine(connection_string)
@@ -28,15 +31,27 @@ if __name__ == "__main__":
         load_raw_data(engine)
         logging.info("Фаза 1 успішно завершена.")
 
-        logging.info("--- СТАРТ ФАЗИ 2: Трансформація даних ---")
+        logging.info(f"--- СТАРТ ФАЗИ 2: Трансформація даних [Режим: {mode.upper()}] ---")
 
         pipeline = Hay_Day_ETL_pipeline(server=server, database=database)
-        
-        pipeline.transform_base_dimensions()
-        pipeline.transform_game_entities()
-        pipeline.transform_farm_facts()
-        pipeline.load_new_demensions_config()
-        pipeline.load_new_facts_config()
+
+        if mode == "dimensions":
+            pipeline.transform_base_dimensions()
+            pipeline.transform_game_entities()
+            pipeline.load_new_demensions_config()
+            logging.info("--- [РЕЖИМ: ДОВІДНИКИ] Успішно завершено! ---")
+        elif mode == "facts":
+            pipeline.transform_farm_facts()
+            pipeline.load_new_facts_config()  
+            logging.info("--- [РЕЖИМ: ФАКТИ] Успішно завершено! ---")
+        else:
+            pipeline.transform_base_dimensions()
+            pipeline.transform_game_entities()
+            pipeline.transform_farm_facts()
+            pipeline.load_new_demensions_config()
+            pipeline.load_new_facts_config()
+            logging.info("--- [РЕЖИМ: ПОВНИЙ ЦИКЛ] Увесь ETL-конвеєр виконано успішно! ---")
+    
 
         logging.info("Увесь ETL-конвеєр виконано без помилок! Перевіряй таблиці.")
         
