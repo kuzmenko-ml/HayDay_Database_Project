@@ -57,6 +57,11 @@
           "source_col": "TownBuildingName",
           "target_id_col": "TownBuildingID",
           "dim_table": "Dim_Town_Buildings"
+        },
+        {
+          "source_col": "LocationName",
+          "target_id_col": "LocationID",
+          "dim_table": "Dim_Location"
         }
       ]
     }
