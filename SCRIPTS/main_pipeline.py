@@ -530,7 +530,7 @@ class Hay_Day_ETL_pipeline:
         except Exception as e:
             logging.error(f"Помилка! Скрипт упав під час обробки Fact_Buildings. Деталі: {e}")
 
-    def load_new_demensions_config(self):
+    def load_new_dimensions_config(self):
         with open("D:/HayDay_Database_Project/SCRIPTS/pipeline_config.json", 'r') as c:
             config = json.load(c)
 
