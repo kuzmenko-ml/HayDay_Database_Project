@@ -38,7 +38,7 @@ if __name__ == "__main__":
         if mode == "dimensions":
             pipeline.transform_base_dimensions()
             pipeline.transform_game_entities()
-            pipeline.load_new_demensions_config()
+            pipeline.load_new_dimensions_config()
             logging.info("--- [РЕЖИМ: ДОВІДНИКИ] Успішно завершено! ---")
         elif mode == "facts":
             pipeline.transform_farm_facts()
@@ -48,7 +48,7 @@ if __name__ == "__main__":
             pipeline.transform_base_dimensions()
             pipeline.transform_game_entities()
             pipeline.transform_farm_facts()
-            pipeline.load_new_demensions_config()
+            pipeline.load_new_dimensions_config()
             pipeline.load_new_facts_config()
             logging.info("--- [РЕЖИМ: ПОВНИЙ ЦИКЛ] Увесь ETL-конвеєр виконано успішно! ---")
     
