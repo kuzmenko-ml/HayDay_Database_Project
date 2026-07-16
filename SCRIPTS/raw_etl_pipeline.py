@@ -129,8 +129,8 @@ def load_raw_data(engine):
         config_data = json.load(f)
 
     for i in config_data:
-        print('---------------------------------------')
-        print('||| Читаємо файл '+ i['file_name'] + '! |||')
+        # print('---------------------------------------')
+        # print('||| Читаємо файл '+ i['file_name'] + '! |||')
         df = pd.read_csv(data_dir / i['file_name'])
         if df.empty:
             print('ПОМИЛКА! Порожній файл. Конвеєр пропускає його.')
@@ -138,4 +138,4 @@ def load_raw_data(engine):
         else:
             # print(df)
             df.to_sql(i['table_name'], con=engine, schema='raw', if_exists='replace', index=False)
-            print('||| Завантажено '+ i['file_name'] + ' у '+ i['table_name'] + ' |||')
+            # print('||| Завантажено '+ i['file_name'] + ' у '+ i['table_name'] + ' |||')
